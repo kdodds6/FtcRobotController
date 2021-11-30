@@ -34,13 +34,15 @@ private BNO055IMU imu;
         }
         return ModdedAngle;
     }
-public void runOpMode() {
+    public void runOpMode() {
     // In init
     
      DcMotor LeftFront;
      DcMotor LeftRear; 
      DcMotor RightFront;
      DcMotor RightRear;
+     DcMotor Arm;
+     DcMotor StarIntake;
      double JoystickAngle = 0;
      double Horizontal = 0;
      double Vertical = 0;
@@ -52,6 +54,8 @@ public void runOpMode() {
      LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
      RightFront = hardwareMap.get(DcMotor.class, "RightFront");
      RightRear = hardwareMap.get(DcMotor.class, "RightRear");
+     Arm = hardwareMap.get(DcMotor.class, "Arm");
+     StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
      imu = hardwareMap.get(BNO055IMU.class, "imu");
      
      //Directions 
@@ -59,11 +63,15 @@ public void runOpMode() {
      RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
      RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
      LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+     Arm.setDirection(DcMotorSimple.Direction.FORWARD);
+     StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
      //Modes
      LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
      RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
      RightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
      LeftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+     StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     waitForStart();
     // After Play
@@ -97,6 +105,34 @@ public void runOpMode() {
             LeftFront.setPower(Pivot + (ModdedVertical + ModdedHorizontal));
             LeftRear.setPower(Pivot + (ModdedVertical - ModdedHorizontal));
             
+        }
+        if (gamepad1.a) {
+            //button a = arm to front bottom
+            Arm.setPower(0.5);
+            Arm.setTargetPosition(0);
+        } else if (gamepad1.b) {
+            //button b = arm to
+            Arm.setPower(0.75);
+            Arm.setTargetPosition(2300);
+        } else if (gamepad1.y) {
+            //button y = arm to
+            Arm.setPower(0.75);
+            Arm.setTargetPosition(2577);
+        } else if (gamepad1.x) {
+            //button x = arm to
+            Arm.setPower(0.75);
+            Arm.setTargetPosition(2775);
+        } else if (gamepad1.right_bumper) {
+           //turn off arm
+            Arm.setPower(0);
+        } else if (gamepad1.dpad_left) {
+            //activates intake
+            StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+            StarIntake.setPower(0.5);
+        } else if (gamepad1.dpad_right) {
+            //outakes
+            StarIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+            StarIntake.setPower(0.5);
         }
     } 
 }
