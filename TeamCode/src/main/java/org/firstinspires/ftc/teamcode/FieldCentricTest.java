@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-
+//Imports (Below)
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -17,10 +17,12 @@ import java.lang.reflect.Field;
 @TeleOp
 
 public class FieldCentricTest extends LinearOpMode {
-private BNO055IMU imu;
-//objects above
 
-    // todo: write your code here
+    //declaring objects (Below)
+    private BNO055IMU imu;
+
+
+    //Functions (Below) (Get Heading)
     private double GetHeading() {
         float IMUAngle;
         double ModdedAngle;
@@ -34,9 +36,11 @@ private BNO055IMU imu;
         }
         return ModdedAngle;
     }
+
     public void runOpMode() {
     // In init
-    
+
+     //Declaring Variables (Below)
      DcMotor LeftFront;
      DcMotor LeftRear; 
      DcMotor RightFront;
@@ -47,9 +51,9 @@ private BNO055IMU imu;
      double Horizontal = 0;
      double Vertical = 0;
      double Pivot = 0;
-     // Declaring Variables 
+
      
-     //Mapping Config objects to variables
+     //Mapping Config objects to variables(Below)
      LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
      LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
      RightFront = hardwareMap.get(DcMotor.class, "RightFront");
@@ -57,15 +61,21 @@ private BNO055IMU imu;
      Arm = hardwareMap.get(DcMotor.class, "Arm");
      StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
      imu = hardwareMap.get(BNO055IMU.class, "imu");
-     
-     //Directions 
+
+     //Directions (Below)
      LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
      RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
      RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
      LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
      Arm.setDirection(DcMotorSimple.Direction.FORWARD);
      StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-     //Modes
+
+     //Target Position(Below)
+     Arm.setTargetPosition(0);
+     StarIntake.setTargetPosition(0);
+
+
+     //Modes (Below)
      LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
      RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
      RightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -74,9 +84,9 @@ private BNO055IMU imu;
      StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     waitForStart();
-    // After Play
+    // In Play
     boolean FieldCentric = true;
-    
+    //boolean used to activate and deactivate field centric at any moment
     while (opModeIsActive()) {
         Vertical =  -gamepad1.left_stick_y;
         Horizontal = gamepad1.left_stick_x;
@@ -94,17 +104,18 @@ private BNO055IMU imu;
             double Length = Math.sqrt(Math.pow(Horizontal,2)+ Math.pow(Vertical,2));
             double ModdedVertical = Length * Math.sin(DriveAngle/180 * Math.PI);
             double ModdedHorizontal = Length * Math.cos(DriveAngle/180 * Math.PI);
-            // Above, Changing Joystick Angles to be Field Centric
+            // Above, manipulating Joystick Angles to be Field Centric
             
             telemetry.addData("Horizontal", Horizontal);
             telemetry.addData("ModdedHorizontal", ModdedHorizontal);
             telemetry.update();
-            
+            //telemetry to test
+
             RightFront.setPower((-Pivot) + (ModdedVertical - ModdedHorizontal));
             RightRear.setPower((-Pivot) + (ModdedVertical + ModdedHorizontal));
             LeftFront.setPower(Pivot + (ModdedVertical + ModdedHorizontal));
             LeftRear.setPower(Pivot + (ModdedVertical - ModdedHorizontal));
-            
+            //setting powers
         }
         if (gamepad1.a) {
             //button a = arm to front bottom
@@ -123,17 +134,20 @@ private BNO055IMU imu;
             Arm.setPower(0.75);
             Arm.setTargetPosition(2775);
         } else if (gamepad1.right_bumper) {
-           //turn off arm
+           //Right Bumper = turn off arm
             Arm.setPower(0);
         } else if (gamepad1.dpad_left) {
-            //activates intake
+            //Dpad left = activates intake
             StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
             StarIntake.setPower(0.5);
         } else if (gamepad1.dpad_right) {
-            //outakes
+            //Dpad right = activate outake
             StarIntake.setDirection(DcMotorSimple.Direction.REVERSE);
             StarIntake.setPower(0.5);
         }
+        telemetry.addData("Arm Position", Arm.getCurrentPosition());
+        telemetry.update();
+        //telemetry for de-bugging
     } 
 }
     
