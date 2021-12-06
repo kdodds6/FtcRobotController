@@ -27,7 +27,7 @@ public class FieldCentricTest extends LinearOpMode {
         float IMUAngle;
         double ModdedAngle;
 
-        IMUAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        IMUAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
         if (IMUAngle < 0) {
             ModdedAngle = 360 + IMUAngle;
         } else {
@@ -35,6 +35,7 @@ public class FieldCentricTest extends LinearOpMode {
         }
         return ModdedAngle;
     }
+
 
     public void runOpMode() {
         // In init
@@ -51,6 +52,7 @@ public class FieldCentricTest extends LinearOpMode {
         double Vertical = 0;
         double Piviot = 0;
         double ArmPower = 0.75;
+
 
 
         //Mapping Config objects to variables(Below)
@@ -80,6 +82,7 @@ public class FieldCentricTest extends LinearOpMode {
         RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LeftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -90,6 +93,9 @@ public class FieldCentricTest extends LinearOpMode {
 
         waitForStart();
         // In Play
+
+
+
         boolean FieldCentric = false;
         //boolean used to activate and deactivate field centric at any moment
 
@@ -107,13 +113,15 @@ public class FieldCentricTest extends LinearOpMode {
                 LeftRear.setPower(Piviot + (Vertical - Horizontal));
             }
             if (FieldCentric) {
-                JoystickAngle = Math.atan2(Vertical, Horizontal) / Math.PI * 180;
                 //Field Centric
+                JoystickAngle = Math.atan2(Vertical, Horizontal) / Math.PI * 180;
+
 
                 if (JoystickAngle < 0) {
                     JoystickAngle = JoystickAngle + 360;
                 }
                 //Above, deals with crossing O
+
                 double DriveAngle = (JoystickAngle - GetHeading()) + 90;
                 double Length = Math.sqrt(Math.pow(Horizontal, 2) + Math.pow(Vertical, 2));
                 double ModdedVertical = Length * Math.sin(DriveAngle / 180 * Math.PI);
@@ -135,7 +143,7 @@ public class FieldCentricTest extends LinearOpMode {
 
             double RightTrigger = gamepad1.right_trigger;
 
-            if (gamepad1.dpad_down) {
+            if (gamepad1.dpad_down && (RightTrigger < 0.3)) {
                 //arm = Floor (Back)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(0);
@@ -143,7 +151,7 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.addData("down",1);
                 telemetry.update();
             }
-            else if (gamepad1.dpad_right) {
+            else if (gamepad1.dpad_right && (RightTrigger < 0.3)) {
                 //arm = 1st tier (Back)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(380);
@@ -151,7 +159,7 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.addData("right",1);
                 telemetry.update();
             }
-            else if (gamepad1.dpad_left) {
+            else if (gamepad1.dpad_left && (RightTrigger < 0.3)) {
                 //arm = 2nd tier (Back)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(760);
@@ -159,50 +167,62 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.addData("left",1);
                 telemetry.update();
             }
-            else if (gamepad1.dpad_up) {
+            else if (gamepad1.dpad_up && (RightTrigger < 0.3)) {
                 //arm= 3rd tier (Back)
                 Arm.setPower(ArmPower);
-                Arm.setTargetPosition(1000);
+                Arm.setTargetPosition(950);
                 //760-1000
                 telemetry.addData("Arm Position", Arm.getCurrentPosition());
                 telemetry.addData("up",1);
                 telemetry.update();
             }
-             else if (gamepad1.dpad_down &= gamepad1.right_trigger > 0.3) {
+             else if (gamepad1.dpad_down && (RightTrigger > 0.3)) {
                 //arm = Floor (Front)
                 Arm.setPower(ArmPower);
-                Arm.setTargetPosition(3100);
+                Arm.setTargetPosition(3150);
             }
-            else if (gamepad1.dpad_right && gamepad1.right_trigger > 0.3) {
+            else if (gamepad1.dpad_right && (RightTrigger > 0.3)) {
                 //arm = 1st tier (Front)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(2862);
             }
-            else if (gamepad1.dpad_left && RightTrigger > 0.3) {
+            else if (gamepad1.dpad_left && (RightTrigger > 0.3)) {
                 //arm = 2nd tier (Front)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(2517);
             }
-            else if (gamepad1.dpad_up && RightTrigger  > 0.3) {
+            else if (gamepad1.dpad_up && (RightTrigger  > 0.3)) {
                 //arm = 3rd tier (Front)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(2100);
             }
 
+            double IMUy = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
+            double IMUz = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            double IMUx = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle;
+
 
             telemetry.addData("Arm Position", Arm.getCurrentPosition());
             telemetry.addData("TRIGGER VALUE", RightTrigger);
+            telemetry.addData("IMU Y", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
+            telemetry.addData("IMU Z", IMUz);
+            telemetry.addData("IMU X", IMUx);
             telemetry.update();
+
 
             if(gamepad1.a) {
                 //A = activates intake
                 StarIntake.setDirection(DcMotorSimple.Direction.REVERSE);
-                StarIntake.setPower(0.5);
+                StarIntake.setPower(0.75);
             }
             else if(gamepad1.b) {
                 //B = activate outake
                 StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-                StarIntake.setPower(0.5);
+                StarIntake.setPower(0.75);
+            }
+            else if(gamepad1.x) {
+                //X = Turns off Intake
+                StarIntake.setPower(0);
             }
 
 
