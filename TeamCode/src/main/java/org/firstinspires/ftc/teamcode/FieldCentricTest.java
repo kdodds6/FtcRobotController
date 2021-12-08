@@ -27,7 +27,7 @@ public class FieldCentricTest extends LinearOpMode {
         float IMUAngle;
         double ModdedAngle;
 
-        IMUAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
+        IMUAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         if (IMUAngle < 0) {
             ModdedAngle = 360 + IMUAngle;
         } else {
@@ -64,6 +64,10 @@ public class FieldCentricTest extends LinearOpMode {
         StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
+        //IMU init (Below)
+        BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
+        imu.initialize(ImuParameters);
+
         //Directions (Below)
         LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -99,7 +103,20 @@ public class FieldCentricTest extends LinearOpMode {
         boolean FieldCentric = false;
         //boolean used to activate and deactivate field centric at any moment
 
+
         while (opModeIsActive()) {
+
+
+            double IMUy = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
+            double IMUz = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            double IMUx = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle;
+
+            telemetry.addData("IMU Y", IMUy);
+            telemetry.addData("IMU Z", IMUz);
+            telemetry.addData("IMU X", IMUx);
+            telemetry.update();
+
+
             Vertical = -gamepad1.left_stick_y;
             Horizontal = gamepad1.left_stick_x;
             Piviot = gamepad1.right_stick_x;
@@ -128,9 +145,9 @@ public class FieldCentricTest extends LinearOpMode {
                 double ModdedHorizontal = Length * Math.cos(DriveAngle / 180 * Math.PI);
                 // Above, manipulating Joystick Angles to be Field Centric
 
-                telemetry.addData("Horizontal", Horizontal);
+                /*telemetry.addData("Horizontal", Horizontal);
                 telemetry.addData("ModdedHorizontal", ModdedHorizontal);
-                telemetry.update();
+                telemetry.update(); */
                 //telemetry to test
 
                 RightFront.setPower((-Piviot) + (ModdedVertical - ModdedHorizontal));
@@ -197,28 +214,21 @@ public class FieldCentricTest extends LinearOpMode {
                 Arm.setTargetPosition(2100);
             }
 
-            double IMUy = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
-            double IMUz = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            double IMUx = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle;
 
+            //telemetry.addData("Arm Position", Arm.getCurrentPosition());
+            //telemetry.addData("TRIGGER VALUE", RightTrigger);
 
-            telemetry.addData("Arm Position", Arm.getCurrentPosition());
-            telemetry.addData("TRIGGER VALUE", RightTrigger);
-            telemetry.addData("IMU Y", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
-            telemetry.addData("IMU Z", IMUz);
-            telemetry.addData("IMU X", IMUx);
-            telemetry.update();
 
 
             if(gamepad1.a) {
                 //A = activates intake
                 StarIntake.setDirection(DcMotorSimple.Direction.REVERSE);
-                StarIntake.setPower(0.75);
+                StarIntake.setPower(1);
             }
             else if(gamepad1.b) {
                 //B = activate outake
                 StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-                StarIntake.setPower(0.75);
+                StarIntake.setPower(0.25);
             }
             else if(gamepad1.x) {
                 //X = Turns off Intake
