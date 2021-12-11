@@ -50,7 +50,7 @@ public class FieldCentricTest extends LinearOpMode {
         double JoystickAngle = 0;
         double Horizontal = 0;
         double Vertical = 0;
-        double Piviot = 0;
+        double Pivot = 0;
         double ArmPower = 0.75;
 
 
@@ -90,6 +90,7 @@ public class FieldCentricTest extends LinearOpMode {
         Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+
         LeftFront.setPower(0);
         RightRear.setPower(0);
         RightFront.setPower(0);
@@ -100,7 +101,7 @@ public class FieldCentricTest extends LinearOpMode {
 
 
 
-        boolean FieldCentric = false;
+        boolean FieldCentric = true;
         //boolean used to activate and deactivate field centric at any moment
 
 
@@ -111,50 +112,64 @@ public class FieldCentricTest extends LinearOpMode {
             double IMUz = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             double IMUx = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle;
 
-            telemetry.addData("IMU Y", IMUy);
+            /*telemetry.addData("IMU Y", IMUy);
             telemetry.addData("IMU Z", IMUz);
             telemetry.addData("IMU X", IMUx);
             telemetry.update();
 
+             */
+
 
             Vertical = -gamepad1.left_stick_y;
             Horizontal = gamepad1.left_stick_x;
-            Piviot = gamepad1.right_stick_x;
+            Pivot = gamepad1.right_stick_x;
             // Above, Getting Joystick Values (For both robot and field centric)
 
             if (!FieldCentric) {
                 //Robot Centric
-                RightFront.setPower(-Piviot + (Vertical - Horizontal));
-                RightRear.setPower(-Piviot + (Vertical + Horizontal));
-                LeftFront.setPower(Piviot + (Vertical + Horizontal));
-                LeftRear.setPower(Piviot + (Vertical - Horizontal));
+                RightFront.setPower(-Pivot + (Vertical - Horizontal));
+                RightRear.setPower(-Pivot + (Vertical + Horizontal));
+                LeftFront.setPower(Pivot + (Vertical + Horizontal));
+                LeftRear.setPower(Pivot + (Vertical - Horizontal));
             }
             if (FieldCentric) {
                 //Field Centric
                 JoystickAngle = Math.atan2(Vertical, Horizontal) / Math.PI * 180;
 
-
+                // deals with crossing O
                 if (JoystickAngle < 0) {
                     JoystickAngle = JoystickAngle + 360;
                 }
-                //Above, deals with crossing O
 
-                double DriveAngle = (JoystickAngle - GetHeading()) + 90;
+
+                //manipulating Joystick Angles to be Field Centric
+                double GetHeading = GetHeading();
+                double DriveAngle = (JoystickAngle - GetHeading) + 180;
                 double Length = Math.sqrt(Math.pow(Horizontal, 2) + Math.pow(Vertical, 2));
                 double ModdedVertical = Length * Math.sin(DriveAngle / 180 * Math.PI);
                 double ModdedHorizontal = Length * Math.cos(DriveAngle / 180 * Math.PI);
-                // Above, manipulating Joystick Angles to be Field Centric
 
-                /*telemetry.addData("Horizontal", Horizontal);
-                telemetry.addData("ModdedHorizontal", ModdedHorizontal);
-                telemetry.update(); */
+                telemetry.addData("IMU Y", IMUy);
+                telemetry.addData("IMU Z", IMUz);
+                telemetry.addData("IMU X", IMUx);
+                telemetry.addData("Horizontal", Horizontal);
+                telemetry.addData("Vertical", Vertical);
+                telemetry.addData("JoystickAngle", JoystickAngle);
+                telemetry.addData("GetHeading", GetHeading);
+                telemetry.addData("DriveAngle", DriveAngle);
+                telemetry.addData("ModdedVertical", ModdedVertical);
+                telemetry.update();
                 //telemetry to test
 
-                RightFront.setPower((-Piviot) - (ModdedVertical - ModdedHorizontal));
-                RightRear.setPower ((-Piviot) - (ModdedVertical + ModdedHorizontal));
-                LeftFront.setPower (Piviot - (ModdedVertical + ModdedHorizontal));
-                LeftRear.setPower (Piviot - (ModdedVertical - ModdedHorizontal));
+
+
+                RightFront.setPower((-Pivot) - (ModdedVertical - ModdedHorizontal));
+                RightRear.setPower ((-Pivot) - (ModdedVertical + ModdedHorizontal));
+                LeftFront.setPower (Pivot - (ModdedVertical + ModdedHorizontal));
+                LeftRear.setPower (Pivot - (ModdedVertical - ModdedHorizontal));
                 //setting powers
+
+
             }
 
 
