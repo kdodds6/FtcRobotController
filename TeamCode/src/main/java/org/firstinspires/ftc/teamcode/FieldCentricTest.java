@@ -125,8 +125,8 @@ public class FieldCentricTest extends LinearOpMode {
             if (!FieldCentric) {
                 //Robot Centric
                 RightFront.setPower(-Piviot + (Vertical - Horizontal));
-                RightRear.setPower(-Piviot + Vertical + Horizontal);
-                LeftFront.setPower(Piviot + Vertical + Horizontal);
+                RightRear.setPower(-Piviot + (Vertical + Horizontal));
+                LeftFront.setPower(Piviot + (Vertical + Horizontal));
                 LeftRear.setPower(Piviot + (Vertical - Horizontal));
             }
             if (FieldCentric) {
@@ -150,17 +150,17 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.update(); */
                 //telemetry to test
 
-                RightFront.setPower((-Piviot) + (ModdedVertical - ModdedHorizontal));
-                RightRear.setPower((-Piviot) + (ModdedVertical + ModdedHorizontal));
-                LeftFront.setPower(Piviot + (ModdedVertical + ModdedHorizontal));
-                LeftRear.setPower(Piviot + (ModdedVertical - ModdedHorizontal));
+                RightFront.setPower((-Piviot) - (ModdedVertical - ModdedHorizontal));
+                RightRear.setPower ((-Piviot) - (ModdedVertical + ModdedHorizontal));
+                LeftFront.setPower (Piviot - (ModdedVertical + ModdedHorizontal));
+                LeftRear.setPower (Piviot - (ModdedVertical - ModdedHorizontal));
                 //setting powers
             }
 
 
             double RightTrigger = gamepad1.right_trigger;
 
-            if (gamepad1.dpad_down && (RightTrigger < 0.3)) {
+            if ((gamepad1.dpad_down && (RightTrigger < 0.3)) || (gamepad2.dpad_down && (RightTrigger < 0.3))) {
                 //arm = Floor (Back)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(0);
@@ -168,7 +168,7 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.addData("down",1);
                 telemetry.update();
             }
-            else if (gamepad1.dpad_right && (RightTrigger < 0.3)) {
+            else if ((gamepad1.dpad_right && (RightTrigger < 0.3)) || (gamepad2.dpad_right && (RightTrigger < 0.3))) {
                 //arm = 1st tier (Back)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(380);
@@ -176,7 +176,7 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.addData("right",1);
                 telemetry.update();
             }
-            else if (gamepad1.dpad_left && (RightTrigger < 0.3)) {
+            else if ((gamepad1.dpad_left && (RightTrigger < 0.3)) || (gamepad2.dpad_left && (RightTrigger < 0.3))) {
                 //arm = 2nd tier (Back)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(760);
@@ -184,7 +184,7 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.addData("left",1);
                 telemetry.update();
             }
-            else if (gamepad1.dpad_up && (RightTrigger < 0.3)) {
+            else if ((gamepad1.dpad_up && (RightTrigger < 0.3)) || (gamepad2.dpad_up && (RightTrigger < 0.3))) {
                 //arm= 3rd tier (Back)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(950);
@@ -193,22 +193,22 @@ public class FieldCentricTest extends LinearOpMode {
                 telemetry.addData("up",1);
                 telemetry.update();
             }
-             else if (gamepad1.dpad_down && (RightTrigger > 0.3)) {
+             else if (gamepad1.dpad_down && (RightTrigger > 0.3) || (gamepad2.dpad_down && (RightTrigger > 0.3))) {
                 //arm = Floor (Front)
                 Arm.setPower(ArmPower);
-                Arm.setTargetPosition(3150);
+                Arm.setTargetPosition(3250);
             }
-            else if (gamepad1.dpad_right && (RightTrigger > 0.3)) {
+            else if (gamepad1.dpad_right && (RightTrigger > 0.3) || (gamepad2.dpad_right && (RightTrigger > 0.3))) {
                 //arm = 1st tier (Front)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(2862);
             }
-            else if (gamepad1.dpad_left && (RightTrigger > 0.3)) {
+            else if (gamepad1.dpad_left && (RightTrigger > 0.3) || (gamepad2.dpad_left && (RightTrigger > 0.3))) {
                 //arm = 2nd tier (Front)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(2517);
             }
-            else if (gamepad1.dpad_up && (RightTrigger  > 0.3)) {
+            else if (gamepad1.dpad_up && (RightTrigger > 0.3) || (gamepad2.dpad_up && (RightTrigger > 0.3))) {
                 //arm = 3rd tier (Front)
                 Arm.setPower(ArmPower);
                 Arm.setTargetPosition(2100);
@@ -220,17 +220,17 @@ public class FieldCentricTest extends LinearOpMode {
 
 
 
-            if(gamepad1.a) {
+            if(gamepad1.a || gamepad2.a ) {
                 //A = activates intake
                 StarIntake.setDirection(DcMotorSimple.Direction.REVERSE);
-                StarIntake.setPower(1);
+                StarIntake.setPower(0.5);
             }
-            else if(gamepad1.b) {
+            else if(gamepad1.b || gamepad2.b ) {
                 //B = activate outake
                 StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-                StarIntake.setPower(0.25);
+                StarIntake.setPower(0.5);
             }
-            else if(gamepad1.x) {
+            else if(gamepad1.x || gamepad2.x) {
                 //X = Turns off Intake
                 StarIntake.setPower(0);
             }
