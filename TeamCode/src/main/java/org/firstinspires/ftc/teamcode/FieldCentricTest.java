@@ -22,9 +22,9 @@ public class FieldCentricTest extends LinearOpMode {
     private DcMotor LeftRear;
     private DcMotor RightFront;
     private DcMotor RightRear;
-    private enum Direction { Forward, Backward, Left, Right};
+    private enum Direction { Forward, Backward, Left, Right}
 
-    //Functions (Below) (Get Heading)
+    //Functions (Get Heading)
     private double GetHeading() {
         float IMUAngle;
         double ModdedAngle;
@@ -40,7 +40,7 @@ public class FieldCentricTest extends LinearOpMode {
 
 
     private void MoveInches(double Inches, double Power, Direction direction) {
-        double TargetDistance = 0;
+        double TargetDistance;
         //Directions and TargetDistance for each Direction
         switch (direction) {
             case Forward:
@@ -86,47 +86,14 @@ public class FieldCentricTest extends LinearOpMode {
         telemetry.addData("power",Power);
         telemetry.addData("TargetInches",TargetDistance);
         telemetry.update();
-/*
-        if (Direction = Direction.equals("Forward")) {
-            LeftFront(t.setDirection(DcMotorSimple.Direction.REVERSE);
-            LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-            RightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-            RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-            TargetDistance = Inches;
-        }
-        if (Direction.equals("Backward")) {
-            LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-            LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-            RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-            RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-            // Multiply by -1 for opposite direction
-            TargetDistance = Inches * -1;
-        }
-        if (Direction.equals("Left")) {
-            LeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-            LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-            RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-            RightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-            //Multiply by 1.05 for correction value
-            TargetDistance = Inches * 1.05;
-        }
-        if (Direction.equals("Right")) {
-            LeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-            LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-            RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-            RightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-            //Multiply by both -1 for directions and 1.05 for correction
-            TargetDistance = (Inches * -1) * 1.05;
-        }
- */
 
         //Calculations
         //Wheel diameter = 3.78 inches
         //537.7 = Encoder Counts per Revolution
         //Calculating Circumference (d * pi)
-        double DriveFactor = 3.78 * 3.14;
+        double Circumference = 3.78 * 3.14;
         //(Encoder Counts per Revolution * Gear ratio (1:1)) / Circumference
-        double EncoderCountsPerInch = (537.7 * 1) / DriveFactor;
+        double EncoderCountsPerInch = (537.7 * 1) / Circumference;
         double FinalEncoderCounts = EncoderCountsPerInch * TargetDistance;
         //Modes
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
