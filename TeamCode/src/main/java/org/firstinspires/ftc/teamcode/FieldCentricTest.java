@@ -22,7 +22,7 @@ public class FieldCentricTest extends LinearOpMode {
     private DcMotor LeftRear;
     private DcMotor RightFront;
     private DcMotor RightRear;
-    private enum Direction { Forward, Backward, Left, Right}
+     enum Direction { Forward, Backward, Left, Right}
 
     //Functions (Get Heading)
     private double GetHeading() {
@@ -110,14 +110,12 @@ public class FieldCentricTest extends LinearOpMode {
         LeftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         //Power
-        LeftFront.setPower(0.25);
-        sleep(5000);
-        LeftRear.setPower(0.25);
-        sleep(5000);
-        RightRear.setPower(0.25);
-        sleep(5000);
-        RightFront.setPower(0.25);
+        LeftFront.setPower(Power);
+        LeftRear.setPower(Power);
+        RightRear.setPower(Power);
+        RightFront.setPower(Power);
 
         while (!(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
             sleep(100);
@@ -145,11 +143,11 @@ public class FieldCentricTest extends LinearOpMode {
             DcMotor LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
             imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-            //IMU init (Below)
+            //IMU init
             BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
             imu.initialize(ImuParameters);
 
-            //Directions (Below)
+            //Directions
             LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
             RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
             RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -159,11 +157,11 @@ public class FieldCentricTest extends LinearOpMode {
             LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
             rightCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
 
-            //Target Position(Below)
+            //Target Position
             armMotor.setTargetPosition(0);
             starIntake.setTargetPosition(0);
 
-            //Modes (Below)
+            //Modes
             LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -173,14 +171,6 @@ public class FieldCentricTest extends LinearOpMode {
             starIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            LeftFront.setPower(0.25);
-            sleep(5000);
-            LeftRear.setPower(0.25);
-            sleep(5000);
-            RightRear.setPower(0.25);
-            sleep(5000);
-            RightFront.setPower(0.25);
 
             LeftFront.setPower(0);
             RightRear.setPower(0);
@@ -206,8 +196,8 @@ public class FieldCentricTest extends LinearOpMode {
             telemetry.update();
              */
 
-                MoveInches(5.0,0.25, Direction.Forward);
-                sleep(2000);
+                //MoveInches(10.0,0.25, Direction.Forward);
+                //sleep(2000);
 
                 Vertical = -gamepad1.left_stick_y;
                 Horizontal = gamepad1.left_stick_x;
