@@ -18,15 +18,11 @@ public class FieldCentricTest extends LinearOpMode {
 
     //declaring objects (Below)
     private BNO055IMU imu;
-    DcMotor LeftFront;
-    DcMotor LeftRear;
-    DcMotor RightFront;
-    DcMotor RightRear;
-    DcMotor ArmMotor;
-    DcMotor StarIntake;
-    DcMotor RightCarouselSpinner;
-    DcMotor LeftCarouselSpinner;
-    public enum Direction { Forward, Backward, Left, Right};
+    private DcMotor LeftFront;
+    private DcMotor LeftRear;
+    private DcMotor RightFront;
+    private DcMotor RightRear;
+    private enum Direction { Forward, Backward, Left, Right};
 
     //Functions (Below) (Get Heading)
     private double GetHeading() {
@@ -160,6 +156,7 @@ public class FieldCentricTest extends LinearOpMode {
             sleep(100);
         }
     }
+
         public void runOpMode() {
             // In init
 
@@ -170,16 +167,15 @@ public class FieldCentricTest extends LinearOpMode {
             double Pivot = 0;
             double ArmPower = 0.75;
 
-
             //Mapping Config objects to variables(Below)
             LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
             LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
             RightFront = hardwareMap.get(DcMotor.class, "RightFront");
             RightRear = hardwareMap.get(DcMotor.class, "RightRear");
-            ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
-            StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
-            RightCarouselSpinner = hardwareMap.get(DcMotor.class, "RightCarouselSpinner");
-            LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
+            DcMotor armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
+            DcMotor starIntake = hardwareMap.get(DcMotor.class, "StarIntake");
+            DcMotor rightCarouselSpinner = hardwareMap.get(DcMotor.class, "RightCarouselSpinner");
+            DcMotor LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
             imu = hardwareMap.get(BNO055IMU.class, "imu");
 
             //IMU init (Below)
@@ -191,26 +187,24 @@ public class FieldCentricTest extends LinearOpMode {
             RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
             RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
             LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-            ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-            StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+            armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
             LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
-            RightCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
-
+            rightCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
 
             //Target Position(Below)
-            ArmMotor.setTargetPosition(0);
-            StarIntake.setTargetPosition(0);
-
+            armMotor.setTargetPosition(0);
+            starIntake.setTargetPosition(0);
 
             //Modes (Below)
             LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             LeftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            RightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            starIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             LeftFront.setPower(0.25);
@@ -226,41 +220,27 @@ public class FieldCentricTest extends LinearOpMode {
             RightFront.setPower(0);
             LeftRear.setPower(0);
 
-
             waitForStart();
             // In Play
 
             //boolean used to activate and deactivate field centric at any moment
             boolean FieldCentric = true;
 
-
             while (opModeIsActive()) {
-
 
                 double IMUy = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle;
                 double IMUz = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 double IMUx = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle;
 
-            /*telemetry.addData("IMU Y", IMUy);
+            /*
+            telemetry.addData("IMU Y", IMUy);
             telemetry.addData("IMU Z", IMUz);
             telemetry.addData("IMU X", IMUx);
             telemetry.update();
-
              */
-
 
                 MoveInches(5.0,0.25, Direction.Forward);
                 sleep(2000);
-
-                /*
-                MoveInches(5,0.5,"Backward");
-                sleep(1000);
-                MoveInches(5,0.5,"Left");
-                sleep(1000);
-                MoveInches(5,0.5,"Right");
-                sleep(1000);
-                */
-
 
                 Vertical = -gamepad1.left_stick_y;
                 Horizontal = gamepad1.left_stick_x;
@@ -283,7 +263,6 @@ public class FieldCentricTest extends LinearOpMode {
                         JoystickAngle = JoystickAngle + 360;
                     }
 
-
                     //manipulating Joystick Angles to be Field Centric
                     double GetHeading = GetHeading();
                     double DriveAngle = (JoystickAngle - GetHeading) + 180;
@@ -303,92 +282,85 @@ public class FieldCentricTest extends LinearOpMode {
                     telemetry.addData("ModdedVertical", ModdedVertical);
                     telemetry.update();
 
-
                     //setting powers
                     RightFront.setPower((-Pivot) - (ModdedVertical - ModdedHorizontal));
                     RightRear.setPower((-Pivot) - (ModdedVertical + ModdedHorizontal));
                     LeftFront.setPower(Pivot - (ModdedVertical + ModdedHorizontal));
                     LeftRear.setPower(Pivot - (ModdedVertical - ModdedHorizontal));
-
-
-
                 }
-
 
                 double RightTrigger = gamepad1.right_trigger;
 
                 if ((gamepad1.dpad_down && (RightTrigger < 0.3)) || (gamepad2.dpad_down && (RightTrigger < 0.3))) {
                     //arm = Floor (Back)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(0);
-                    telemetry.addData("Arm Position", ArmMotor.getCurrentPosition());
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(0);
+                    telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("down", 1);
                     telemetry.update();
                 } else if ((gamepad1.dpad_right && (RightTrigger < 0.3)) || (gamepad2.dpad_right && (RightTrigger < 0.3))) {
                     //arm = 1st tier (Back)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(380);
-                    telemetry.addData("Arm Position", ArmMotor.getCurrentPosition());
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(380);
+                    telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("right", 1);
                     telemetry.update();
                 } else if ((gamepad1.dpad_left && (RightTrigger < 0.3)) || (gamepad2.dpad_left && (RightTrigger < 0.3))) {
                     //arm = 2nd tier (Back)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(760);
-                    telemetry.addData("Arm Position", ArmMotor.getCurrentPosition());
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(760);
+                    telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("left", 1);
                     telemetry.update();
                 } else if ((gamepad1.dpad_up && (RightTrigger < 0.3)) || (gamepad2.dpad_up && (RightTrigger < 0.3))) {
                     //arm= 3rd tier (Back)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(950);
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(950);
                     //760-1000
-                    telemetry.addData("Arm Position", ArmMotor.getCurrentPosition());
+                    telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("up", 1);
                     telemetry.update();
                 } else if (gamepad1.dpad_down && (RightTrigger > 0.3) || (gamepad2.dpad_down && (RightTrigger > 0.3))) {
                     //arm = Floor (Front)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(3250);
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(3250);
                 } else if (gamepad1.dpad_right && (RightTrigger > 0.3) || (gamepad2.dpad_right && (RightTrigger > 0.3))) {
                     //arm = 1st tier (Front)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(2862);
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(2862);
                 } else if (gamepad1.dpad_left && (RightTrigger > 0.3) || (gamepad2.dpad_left && (RightTrigger > 0.3))) {
                     //arm = 2nd tier (Front)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(2517);
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(2517);
                 } else if (gamepad1.dpad_up && (RightTrigger > 0.3) || (gamepad2.dpad_up && (RightTrigger > 0.3))) {
                     //arm = 3rd tier (Front)
-                    ArmMotor.setPower(ArmPower);
-                    ArmMotor.setTargetPosition(2100);
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(2100);
                 }
-
 
                 //telemetry.addData("Arm Position", Arm.getCurrentPosition());
                 //telemetry.addData("TRIGGER VALUE", RightTrigger);
 
-
                 if (gamepad1.a || gamepad2.a) {
                     //A = activates intake
-                    StarIntake.setDirection(DcMotorSimple.Direction.REVERSE);
-                    StarIntake.setPower(0.5);
+                    starIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+                    starIntake.setPower(0.5);
                 } else if (gamepad1.b || gamepad2.b) {
                     //B = activate outake
-                    StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-                    StarIntake.setPower(0.5);
+                    starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+                    starIntake.setPower(0.5);
                 } else if (gamepad1.x || gamepad2.x) {
                     //X = Turns off Intake
-                    StarIntake.setPower(0);
+                    starIntake.setPower(0);
                 }
 
                 if (gamepad1.y) {
                     LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
-                    RightCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
-                    RightCarouselSpinner.setPower(0.75);
+                    rightCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
+                    rightCarouselSpinner.setPower(0.75);
                     LeftCarouselSpinner.setPower(0.75);
                 } else {
-                    RightCarouselSpinner.setPower(0);
+                    rightCarouselSpinner.setPower(0);
                     LeftCarouselSpinner.setPower(0);
                 }
             }
