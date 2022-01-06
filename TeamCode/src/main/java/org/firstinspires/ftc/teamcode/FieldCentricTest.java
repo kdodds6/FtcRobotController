@@ -47,36 +47,49 @@ public class FieldCentricTest extends LinearOpMode {
         double TargetDistance = 0;
         //Directions and TargetDistance for each Direction
         switch (direction) {
-            case Forward: {
+            case Forward:
+                telemetry.addData("forward","forward");
                 LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
                 LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-                RightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+                RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
                 RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-                TargetDistance = Inches;}
-            case Backward: {
+                TargetDistance = Inches;
+                break;
+
+            case Backward:
+                telemetry.addData("back","back");
                 LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
                 LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
                 RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
                 RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
                 // Multiply by -1 for opposite direction
-                TargetDistance = Inches * -1;}
-            case Left: {
+                TargetDistance = Inches * -1;
+                break;
+            case Left:
+                telemetry.addData("left","left");
                 LeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
                 LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
                 RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
                 RightRear.setDirection(DcMotorSimple.Direction.REVERSE);
                 //Multiply by 1.05 for correction value
-                TargetDistance = Inches * 1.05;}
-            case Right: {
+                TargetDistance = Inches * 1.05;
+                break;
+            case Right:
+                telemetry.addData("right","right");
                 LeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
                 LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
                 RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
                 RightRear.setDirection(DcMotorSimple.Direction.REVERSE);
                 //Multiply by both -1 for directions and 1.05 for correction
-                TargetDistance = (Inches * -1) * 1.05;}
+                TargetDistance = (Inches * -1) * 1.05;
+                break;
 
-            }
-
+            default:
+                throw new IllegalStateException("Unexpected value: " + direction);
+        }
+        telemetry.addData("power",Power);
+        telemetry.addData("TargetInches",TargetDistance);
+        telemetry.update();
 /*
         if (Direction = Direction.equals("Forward")) {
             LeftFront(t.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -135,13 +148,13 @@ public class FieldCentricTest extends LinearOpMode {
         RightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //Power
-        LeftFront.setPower(Power * 0.8);
+        LeftFront.setPower(0.25);
         sleep(5000);
-        LeftRear.setPower(Power * 0.8);
+        LeftRear.setPower(0.25);
         sleep(5000);
-        RightRear.setPower(Power * 0.8);
+        RightRear.setPower(0.25);
         sleep(5000);
-        RightFront.setPower(Power * 0.8);
+        RightFront.setPower(0.25);
 
         while (!(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
             sleep(100);
@@ -200,6 +213,13 @@ public class FieldCentricTest extends LinearOpMode {
             RightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+            LeftFront.setPower(0.25);
+            sleep(5000);
+            LeftRear.setPower(0.25);
+            sleep(5000);
+            RightRear.setPower(0.25);
+            sleep(5000);
+            RightFront.setPower(0.25);
 
             LeftFront.setPower(0);
             RightRear.setPower(0);
@@ -228,7 +248,8 @@ public class FieldCentricTest extends LinearOpMode {
 
              */
 
-                MoveInches(5,0.25, Direction.Forward);
+
+                MoveInches(5.0,0.25, Direction.Forward);
                 sleep(2000);
 
                 /*
