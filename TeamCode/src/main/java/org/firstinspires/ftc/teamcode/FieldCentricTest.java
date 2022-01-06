@@ -12,8 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import java.lang.reflect.Field;
 
- 
-
 @TeleOp
 
 public class FieldCentricTest extends LinearOpMode {
@@ -49,6 +47,7 @@ public class FieldCentricTest extends LinearOpMode {
         double TargetDistance = 0;
         //Directions and TargetDistance for each Direction
         if (Direction.equals("Forward")) {
+            // Test commit
             LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
             LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
             RightFront.setDirection(DcMotorSimple.Direction.REVERSE);
