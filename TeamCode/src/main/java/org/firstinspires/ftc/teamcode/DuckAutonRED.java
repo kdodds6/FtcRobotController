@@ -49,7 +49,7 @@ public class DuckAutonRED extends LinearOpMode {
     private DcMotor LeftRear;
     private DcMotor RightFront;
     private DcMotor RightRear;
-    enum Direction { Forward, Backward, Left, Right}
+    enum Direction {Forward, Backward, Left, Right}
 
     //Functions
     private void MoveInches(double Inches, double Power, Direction direction) {
@@ -142,12 +142,24 @@ public class DuckAutonRED extends LinearOpMode {
     public void runOpMode() {
     //In Init
 
+        //Hardware Maps
+        LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
+        LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
+        RightFront = hardwareMap.get(DcMotor.class, "RightFront");
+        RightRear = hardwareMap.get(DcMotor.class, "RightRear");
+
         waitForStart();
         //In Play
 
-        while (opModeIsActive()) {
+        MoveInches(10,0.5,Direction.Forward);
+        sleep(5000);
+        MoveInches(10,0.5,Direction.Backward);
+        sleep(5000);
+        MoveInches(10,0.5,Direction.Left);
+        sleep(5000);
+        MoveInches(10,0.5,Direction.Right);
+        sleep(5000);
 
 
-        }
     }
 }
