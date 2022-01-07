@@ -31,20 +31,17 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @Autonomous
 //@Disabled
-public class DuckAutonRED extends LinearOpMode {
+public class DuckAutonBLUE extends LinearOpMode {
 
 
     //Declaring Objects and enums
@@ -253,11 +250,11 @@ public class DuckAutonRED extends LinearOpMode {
         waitForStart();
         //In Play
 
-        MoveInches(5,0.4,Direction.Forward);
-        MoveInches(4,0.4,Direction.Left);
+        MoveInches(5,0.4, Direction.Forward);
+        MoveInches(4,0.4, Direction.Right);
         CarouselSpinnersON();
         sleep(3500);
-        MoveInches(20,0.4,Direction.Forward);
+        MoveInches(20,0.4, Direction.Forward);
 
 
 
