@@ -301,11 +301,11 @@ public class FieldCentricTest extends LinearOpMode {
                 if (gamepad1.a || gamepad2.a) {
                     //A = activates intake
                     starIntake.setDirection(DcMotorSimple.Direction.REVERSE);
-                    starIntake.setPower(0.5);
+                    starIntake.setPower(0.75);
                 } else if (gamepad1.b || gamepad2.b) {
                     //B = activate outake
                     starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-                    starIntake.setPower(0.5);
+                    starIntake.setPower(0.75);
                 } else if (gamepad1.x || gamepad2.x) {
                     //X = Turns off Intake
                     starIntake.setPower(0);

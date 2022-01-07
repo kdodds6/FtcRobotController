@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -37,7 +38,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Autonomous
 //@Disabled
@@ -49,9 +52,85 @@ public class DuckAutonRED extends LinearOpMode {
     private DcMotor LeftRear;
     private DcMotor RightFront;
     private DcMotor RightRear;
+    private BNO055IMU imu;
     enum Direction {Forward, Backward, Left, Right}
 
     //Functions
+    private double GetHeading() {
+        float IMUAngle;
+        float ModdedAngle;
+
+        IMUAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        if (IMUAngle < 0) {
+            ModdedAngle = 360 + IMUAngle;
+        } else {
+            ModdedAngle = IMUAngle;
+        }
+        telemetry.addData("GetHeading", ModdedAngle);
+        return ModdedAngle;
+    }
+
+    private void SnapToAngle(double TargetAngle){
+        double HighSpeedBuffer = 10;
+        double HighSpeed = 0.35;
+        double LowSpeed = 0.25;
+        int Turn = 180;
+        double Angle;
+
+        while (!(Math.abs(Turn)<=0.5)) {
+            Angle = TargetAngle - GetHeading();
+            telemetry.addData("Difference to target:", Angle);
+            if (Angle > 180) {
+                Turn = (int) (Angle - 360);
+            } else if (Angle < -180) {
+                Turn = (int) (Angle + 360);
+            } else if (Angle < 180 && Angle > -180) {
+                Turn = (int) Angle;
+            }
+            telemetry.addData("Amount to turn:", Turn);
+
+            if (Turn < 0) {
+                // Turn
+                LeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+                LeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+                RightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+                RightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+                LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                LeftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                RightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else {
+                LeftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+                LeftRear.setDirection(DcMotorSimple.Direction.FORWARD);
+                RightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+                RightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+                LeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                LeftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                RightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                RightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+            if (Math.abs(Turn) > HighSpeedBuffer) {
+                LeftFront.setPower(HighSpeed);
+                LeftRear.setPower(HighSpeed);
+                RightFront.setPower(HighSpeed);
+                RightRear.setPower(HighSpeed);
+            } else if (Math.abs(Turn) >= 0.5) {
+                LeftFront.setPower(LowSpeed);
+                LeftRear.setPower(LowSpeed);
+                RightFront.setPower(LowSpeed);
+                RightRear.setPower(LowSpeed);
+                telemetry.addData("Slow","Turn");
+
+            }
+            telemetry.update();
+        }
+        LeftFront.setPower(0);
+        LeftRear.setPower(0);
+        RightFront.setPower(0);
+        RightRear.setPower(0);
+    }
+
+
     private void MoveInches(double Inches, double Power, Direction direction) {
         double TargetDistance;
         //Directions and TargetDistance for each Direction
@@ -147,18 +226,32 @@ public class DuckAutonRED extends LinearOpMode {
         LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
         RightFront = hardwareMap.get(DcMotor.class, "RightFront");
         RightRear = hardwareMap.get(DcMotor.class, "RightRear");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        //IMU init
+        BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
+        imu.initialize(ImuParameters);
 
         waitForStart();
         //In Play
 
-        MoveInches(10,0.5,Direction.Forward);
-        sleep(5000);
-        MoveInches(10,0.5,Direction.Backward);
-        sleep(5000);
-        MoveInches(10,0.5,Direction.Left);
-        sleep(5000);
-        MoveInches(10,0.5,Direction.Right);
-        sleep(5000);
+        //MoveInches(24,0.5,Direction.Forward);
+        //sleep(5000);
+        //MoveInches(24,0.5,Direction.Backward);
+        //sleep(5000);
+        //MoveInches(24,0.5,Direction.Left);
+        //sleep(5000);
+        //MoveInches(24,0.5,Direction.Right);
+        //sleep(5000);
+
+       SnapToAngle(90);
+       sleep(5000);
+       SnapToAngle(180);
+       sleep(5000);
+       SnapToAngle(0);
+       sleep(5000);
+
+
 
 
     }
