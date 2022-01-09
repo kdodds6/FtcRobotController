@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -22,7 +24,12 @@ public class FieldCentricTest extends LinearOpMode {
     private DcMotor LeftRear;
     private DcMotor RightFront;
     private DcMotor RightRear;
-     enum Direction { Forward, Backward, Left, Right}
+    private DcMotor armMotor;
+    private DcMotor starIntake;
+    private DcMotor rightCarouselSpinner;
+    private DcMotor LeftCarouselSpinner;
+    enum Direction {Forward, Backward, Left, Right}
+    private Servo IntakeServo;
 
     //Functions (Get Heading)
     private double GetHeading() {
@@ -137,11 +144,12 @@ public class FieldCentricTest extends LinearOpMode {
             LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
             RightFront = hardwareMap.get(DcMotor.class, "RightFront");
             RightRear = hardwareMap.get(DcMotor.class, "RightRear");
-            DcMotor armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
-            DcMotor starIntake = hardwareMap.get(DcMotor.class, "StarIntake");
-            DcMotor rightCarouselSpinner = hardwareMap.get(DcMotor.class, "RightCarouselSpinner");
-            DcMotor LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
+            armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
+            starIntake = hardwareMap.get(DcMotor.class, "StarIntake");
+            rightCarouselSpinner = hardwareMap.get(DcMotor.class, "RightCarouselSpinner");
+            LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
             imu = hardwareMap.get(BNO055IMU.class, "imu");
+            IntakeServo = hardwareMap.get(Servo.class, "IntakeServo");
 
             //IMU init
             BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
@@ -302,11 +310,14 @@ public class FieldCentricTest extends LinearOpMode {
                 if (gamepad1.a || gamepad2.a) {
                     //A = activates intake
                     starIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+                    IntakeServo.setDirection(Servo.Direction.REVERSE);
                     starIntake.setPower(0.75);
+                    IntakeServo.setPosition(0);
                 } else if (gamepad1.b || gamepad2.b) {
                     //B = activate outake
                     starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
                     starIntake.setPower(0.75);
+                    IntakeServo.setPosition(0.5);
                 } else if (gamepad1.x || gamepad2.x) {
                     //X = Turns off Intake
                     starIntake.setPower(0);

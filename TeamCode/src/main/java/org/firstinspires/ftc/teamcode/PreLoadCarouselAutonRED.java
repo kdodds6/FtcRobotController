@@ -41,7 +41,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @Autonomous
 //@Disabled
-public class PreLoadCarouselAutonBLUE extends LinearOpMode {
+public class PreLoadCarouselAutonRED extends LinearOpMode {
 
 
     //Declaring Objects and enums
@@ -87,18 +87,22 @@ public class PreLoadCarouselAutonBLUE extends LinearOpMode {
             case Floor:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(3250);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Bottom:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(2862);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Middle:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(2517);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Top:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(2100);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
 
             default:
@@ -295,11 +299,10 @@ public class PreLoadCarouselAutonBLUE extends LinearOpMode {
         BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
         imu.initialize(ImuParameters);
 
-        //Modes
         rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         //Directions
         ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -309,14 +312,14 @@ public class PreLoadCarouselAutonBLUE extends LinearOpMode {
 
         String HubPosition = "3rd";
 
-        MoveInches(24,0.4, Direction.Right);
-        MoveInches(5,0.4, Direction.Forward);
+        MoveInches(28,0.4,Direction.Right);
+        MoveInches(5,0.4,Direction.Forward);
         if (HubPosition == "3rd") {
             MovingArmFront(ArmPositionFront.Bottom);
-            MoveInches(5,0.4, Direction.Forward);
+            sleep(2000);
+            MoveInches(5,0.4,Direction.Forward);
             //outtake
-            MoveInches(8,0.4, Direction.Backward);
-
+            MoveInches(10,0.4,Direction.Backward);
         }
         if (HubPosition == "2nd") {
 
@@ -324,7 +327,8 @@ public class PreLoadCarouselAutonBLUE extends LinearOpMode {
         if (HubPosition == "1st") {
 
         }
-        MoveInches(30,0.4, Direction.Left);
+        MoveInches(50,0.4,Direction.Left);
+
 
 
 
