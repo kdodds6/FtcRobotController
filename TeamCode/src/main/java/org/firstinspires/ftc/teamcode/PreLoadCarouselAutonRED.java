@@ -55,10 +55,19 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
     private DcMotor LeftCarouselSpinner;
     enum ArmPositionBack {Floor,Bottom,Middle,Top}
     enum ArmPositionFront {Floor,Bottom,Middle,Top}
+    enum IntakeState {Outake,Intake,Off}
     private DcMotor ArmMotor;
+    private DcMotor StarIntake;
 
 
     //Functions
+    private void OutakeOn() {
+        StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        StarIntake.setPower(0.3);
+    }
+    private void IntakeOff() {
+        StarIntake.setPower(0);
+    }
     private void MovingArmBack(ArmPositionBack ArmPosition) {
         switch(ArmPosition) {
             case Floor:
@@ -294,7 +303,8 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         rightCarouselSpinner = hardwareMap.get(DcMotor.class, "RightCarouselSpinner");
         LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
         ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
-
+        StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
+        
         //IMU init
         BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
         imu.initialize(ImuParameters);
@@ -302,33 +312,58 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        
 
 
         //Directions
         ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
 
         waitForStart();
         //In Play
 
         String HubPosition = "3rd";
 
-        MoveInches(28,0.4,Direction.Right);
-        MoveInches(5,0.4,Direction.Forward);
+        //getting to carousel
+        MoveInches(4,0.4,Direction.Forward);
+        MoveInches(25,0.4,Direction.Left);
+        //at carousel
+        CarouselSpinnersON();
+        sleep(3500);
+        CarouselSpinnersOFF();
+        //lined up at hub
+        MoveInches(48,0.4,Direction.Right);
+        MoveInches(6,0.4,Direction.Forward);
+
         if (HubPosition == "3rd") {
+            //getting closer to hub
             MovingArmFront(ArmPositionFront.Bottom);
-            sleep(2000);
+            sleep(4000);
             MoveInches(5,0.4,Direction.Forward);
-            //outtake
-            MoveInches(10,0.4,Direction.Backward);
         }
         if (HubPosition == "2nd") {
-
+            MovingArmFront(ArmPositionFront.Middle);
+            sleep(3000);
+            MoveInches(4,0.4,Direction.Forward);
+            telemetry.addData("In", "Middle");
         }
         if (HubPosition == "1st") {
-
+            MovingArmFront(ArmPositionFront.Top);
+            sleep(3000);
+            MoveInches(9,0.4,Direction.Forward);
+            telemetry.addData("In", "Top");
         }
-        MoveInches(50,0.4,Direction.Left);
 
+        //dropping off block
+        OutakeOn();
+        sleep(1500);
+        IntakeOff();
+        //going to warehouse
+        MoveInches(10,0.4,Direction.Backward);
+        SnapToAngle(270);
+        MoveInches(10,0.4,Direction.Right);
+        MoveInches(60,0.8,Direction.Forward);
 
 
 
