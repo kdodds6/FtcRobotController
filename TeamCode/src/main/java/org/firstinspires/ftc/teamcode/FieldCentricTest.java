@@ -291,19 +291,19 @@ public class FieldCentricTest extends LinearOpMode {
                     //IntakeServo.setDirection(Servo.Direction.REVERSE);
                     //IntakeServo.setPosition(0);
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(3250);
+                    armMotor.setTargetPosition(3290);
                 } else if (gamepad1.dpad_right && (RightTrigger1 > 0.3) || (gamepad2.dpad_right && (RightTrigger2 > 0.3))) {
                     //arm = 1st tier (Front)
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(2862);
+                    armMotor.setTargetPosition(3044);
                 } else if (gamepad1.dpad_left && (RightTrigger1 > 0.3) || (gamepad2.dpad_left && (RightTrigger2 > 0.3))) {
                     //arm = 2nd tier (Front)
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(2517);
+                    armMotor.setTargetPosition(2742);
                 } else if (gamepad1.dpad_up && (RightTrigger1 > 0.3) || (gamepad2.dpad_up && (RightTrigger2 > 0.3))) {
                     //arm = 3rd tier (Front)
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(2100);
+                    armMotor.setTargetPosition(2493);
                 }
 
                 //telemetry.addData("Arm Position", Arm.getCurrentPosition());

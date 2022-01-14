@@ -95,22 +95,22 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         switch(ArmPosition) {
             case Floor:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(3250);
+                ArmMotor.setTargetPosition(3290);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Bottom:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2862);
+                ArmMotor.setTargetPosition(3044);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Middle:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2517);
+                ArmMotor.setTargetPosition(2742);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Top:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2100);
+                ArmMotor.setTargetPosition(2493);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
 
@@ -334,37 +334,36 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         CarouselSpinnersOFF();
         //lined up at hub
         MoveInches(48,0.4,Direction.Right);
-        MoveInches(6,0.4,Direction.Forward);
-
         if (HubPosition == "3rd") {
             //getting closer to hub
-            MovingArmFront(ArmPositionFront.Bottom);
-            sleep(4000);
-            MoveInches(5,0.4,Direction.Forward);
-        }
-        if (HubPosition == "2nd") {
-            MovingArmFront(ArmPositionFront.Middle);
-            sleep(3000);
-            MoveInches(4,0.4,Direction.Forward);
-            telemetry.addData("In", "Middle");
-        }
-        if (HubPosition == "1st") {
+            MoveInches(12,0.4,Direction.Forward);
             MovingArmFront(ArmPositionFront.Top);
             sleep(3000);
-            MoveInches(9,0.4,Direction.Forward);
-            telemetry.addData("In", "Top");
+        }
+        if (HubPosition == "2nd") {
+            MoveInches(7,0.4,Direction.Forward);
+            MovingArmFront(ArmPositionFront.Middle);
+            sleep(3000);
+        }
+        if (HubPosition == "1st") {
+            MoveInches(13,0.4,Direction.Forward);
+            MovingArmFront(ArmPositionFront.Bottom);
+            sleep(3000);
         }
 
         //dropping off block
         OutakeOn();
-        sleep(1500);
+        sleep(1750);
         IntakeOff();
+        //getting arm in postion for tele-op
         //going to warehouse
-        MoveInches(10,0.4,Direction.Backward);
+        //MoveInches(10,0.4,Direction.Backward);
         SnapToAngle(270);
-        MoveInches(10,0.4,Direction.Right);
-        MoveInches(60,0.8,Direction.Forward);
-
+        //MoveInches(10,0.4,Direction.Right);
+        MoveInches(70,0.8,Direction.Forward);
+        SnapToAngle(0);
+        MovingArmBack(ArmPositionBack.Floor);
+        sleep(2000);
 
 
 
