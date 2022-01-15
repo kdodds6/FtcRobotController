@@ -138,6 +138,7 @@ public class FieldCentricTest extends LinearOpMode {
             double Vertical = 0;
             double Pivot = 0;
             double ArmPower = 0.75;
+            boolean ArmNotReset = false;
 
             //Mapping Config objects to variables(Below)
             LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
@@ -259,6 +260,7 @@ public class FieldCentricTest extends LinearOpMode {
 
                 if ((gamepad1.dpad_down && (RightTrigger1 < 0.3)) || (gamepad2.dpad_down && (RightTrigger2 < 0.3))) {
                     //arm = Floor (Back)
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(0);
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
@@ -266,6 +268,7 @@ public class FieldCentricTest extends LinearOpMode {
                     telemetry.update();
                 } else if ((gamepad1.dpad_right && (RightTrigger1 < 0.3)) || (gamepad2.dpad_right && (RightTrigger2 < 0.3))) {
                     //arm = 1st tier (Back)
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(380);
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
@@ -273,6 +276,7 @@ public class FieldCentricTest extends LinearOpMode {
                     telemetry.update();
                 } else if ((gamepad1.dpad_left && (RightTrigger1 < 0.3)) || (gamepad2.dpad_left && (RightTrigger2 < 0.3))) {
                     //arm = 2nd tier (Back)
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(760);
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
@@ -280,6 +284,7 @@ public class FieldCentricTest extends LinearOpMode {
                     telemetry.update();
                 } else if ((gamepad1.dpad_up && (RightTrigger1 < 0.3)) || (gamepad2.dpad_up && (RightTrigger2 < 0.3))) {
                     //arm= 3rd tier (Back)
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(950);
                     //760-1000
@@ -290,20 +295,24 @@ public class FieldCentricTest extends LinearOpMode {
                     //arm = Floor (Front)
                     //IntakeServo.setDirection(Servo.Direction.REVERSE);
                     //IntakeServo.setPosition(0);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(3290);
                 } else if (gamepad1.dpad_right && (RightTrigger1 > 0.3) || (gamepad2.dpad_right && (RightTrigger2 > 0.3))) {
                     //arm = 1st tier (Front)
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(3044);
                 } else if (gamepad1.dpad_left && (RightTrigger1 > 0.3) || (gamepad2.dpad_left && (RightTrigger2 > 0.3))) {
                     //arm = 2nd tier (Front)
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(2742);
                 } else if (gamepad1.dpad_up && (RightTrigger1 > 0.3) || (gamepad2.dpad_up && (RightTrigger2 > 0.3))) {
                     //arm = 3rd tier (Front)
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(2493);
+                    armMotor.setTargetPosition(2400);
                 }
 
                 //telemetry.addData("Arm Position", Arm.getCurrentPosition());
@@ -333,6 +342,24 @@ public class FieldCentricTest extends LinearOpMode {
                 } else {
                     rightCarouselSpinner.setPower(0);
                     LeftCarouselSpinner.setPower(0);
+                }
+
+                if(gamepad1.left_bumper) {
+                    armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    armMotor.setPower(0.1);
+                    ArmNotReset = true;
+                }
+                if(gamepad1.right_bumper) {
+                    armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    armMotor.setPower(0.1);
+                    ArmNotReset = true;
+                }
+                if(ArmNotReset && !(gamepad1.left_bumper || gamepad1.right_bumper)) {
+                    armMotor.setPower(0);
+                    armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    ArmNotReset = false;
                 }
             }
         }

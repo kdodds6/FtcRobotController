@@ -32,10 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -43,7 +41,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @Autonomous
 //@Disabled
-public class PreLoadCarouselAutonRED extends LinearOpMode {
+public class RightStrafeTest extends LinearOpMode {
 
 
     //Declaring Objects and enums
@@ -60,13 +58,12 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
     enum IntakeState {Outake,Intake,Off}
     private DcMotor ArmMotor;
     private DcMotor StarIntake;
-    private AnalogInput Camera;
 
 
     //Functions
     private void OutakeOn() {
         StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-        StarIntake.setPower(0.45);
+        StarIntake.setPower(0.3);
     }
     private void IntakeOff() {
         StarIntake.setPower(0);
@@ -103,7 +100,7 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
                 break;
             case Bottom:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2989);
+                ArmMotor.setTargetPosition(3044);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Middle:
@@ -207,9 +204,8 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
     }
 
 
-    private void MoveInches(double Inches, double Power, Direction direction,double Timeout) {
+    private void MoveInches(double Inches, double Power, Direction direction) {
         double TargetDistance;
-        ElapsedTime runTime = new ElapsedTime();
         //Directions and TargetDistance for each Direction
         switch (direction) {
             case Forward:
@@ -284,32 +280,19 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
                 RightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 //Power
-                runTime.reset();
-                runTime.startTime();
-
                 LeftFront.setPower(Power);
                 LeftRear.setPower(Power);
                 RightRear.setPower(Power);
                 RightFront.setPower(Power);
-                if (Timeout != 0) {
-                    while ((runTime.milliseconds() < Timeout) || !(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
-                        sleep(10);
-                    }
-                }
-                else {
-                    while (!(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
-                        sleep(10);
-                    }
-                }
 
-    }
-
+                while (!(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
+                    sleep(10);
+                }
+        }
 
 
     public void runOpMode() {
     //In Init
-
-        int HubPosition = 0;
 
         //Hardware Maps
         LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
@@ -321,9 +304,7 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
         ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
         StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
-        Camera = hardwareMap.get(AnalogInput.class, "Camera");
-
-
+        
         //IMU init
         BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
         imu.initialize(ImuParameters);
@@ -342,68 +323,9 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         waitForStart();
         //In Play
 
-        if (Camera.getVoltage() < 1.5) {
-            HubPosition = 0;
-        }
-        if ((Camera.getVoltage() > 1.5) && (Camera.getVoltage() < 2.3)) {
-            HubPosition = 1;
-        }
-        if (Camera.getVoltage() > 2.3) {
-            HubPosition = 2;
-        }
 
-        //getting to carousel
-        MoveInches(8,0.4,Direction.Forward,0);
+        MoveInches(30,0.4, Direction.Right);
 
-        if (HubPosition == 0) {
-            MovingArmFront(ArmPositionFront.Top);
-            sleep(1000);
-        }
-        if (HubPosition == 1) {
-            MovingArmFront(ArmPositionFront.Middle);
-            sleep(1000);
-        }
-        if (HubPosition == 2) {
-            MovingArmFront(ArmPositionFront.Bottom);
-            sleep(1000);
-        }
-
-        MoveInches(4,0.4,Direction.Backward,0);
-        //going to carousel
-        MoveInches(25,0.4,Direction.Left,2000);
-        //at carousel
-        SnapToAngle(0);
-        CarouselSpinnersON();
-        sleep(2500);
-        CarouselSpinnersOFF();
-        SnapToAngle(0);
-        //lined up at hub
-        MoveInches(2, 0.4, Direction.Forward,0);
-        MoveInches(2,0.5,Direction.Right,0);
-        MoveInches(45,0.5,Direction.Right,0);
-        SnapToAngle(0);
-
-        if (HubPosition == 0) {
-            MoveInches(12,0.5,Direction.Forward,2500);
-        }
-        if (HubPosition == 1) {
-            MoveInches(11,0.5,Direction.Forward,2500);
-        }
-        if (HubPosition == 2) {
-            MoveInches(12,0.5,Direction.Forward,2500);
-        }
-
-        //dropping off block
-        OutakeOn();
-        sleep(1750);
-        IntakeOff();
-        //MoveInches(10,0.4,Direction.Backward);
-        SnapToAngle(280);
-        //MoveInches(10,0.4,Direction.Right);
-        MoveInches(75,1,Direction.Forward,4000);
-        SnapToAngle(0);
-        MovingArmBack(ArmPositionBack.Floor);
-        sleep(2000);
 
 
 
