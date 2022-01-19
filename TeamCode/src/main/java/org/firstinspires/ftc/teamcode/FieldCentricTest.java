@@ -286,15 +286,15 @@ public class FieldCentricTest extends LinearOpMode {
                     //arm= 3rd tier (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(950);
+                    armMotor.setTargetPosition(1000);
                     //760-1000
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("up", 1);
                     telemetry.update();
                 } else if (gamepad1.dpad_down && (RightTrigger1 > 0.3) || (gamepad2.dpad_down && (RightTrigger2 > 0.3))) {
                     //arm = Floor (Front)
-                    //IntakeServo.setDirection(Servo.Direction.REVERSE);
-                    //IntakeServo.setPosition(0);
+                    IntakeServo.setDirection(Servo.Direction.REVERSE);
+                    IntakeServo.setPosition(0);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(3290);
@@ -323,12 +323,12 @@ public class FieldCentricTest extends LinearOpMode {
                     starIntake.setDirection(DcMotorSimple.Direction.REVERSE);
                     IntakeServo.setDirection(Servo.Direction.REVERSE);
                     starIntake.setPower(0.75);
-                    //IntakeServo.setPosition(0);
+                    IntakeServo.setPosition(0);
                 } else if (gamepad1.b || gamepad2.b) {
                     //B = activate outake
                     starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
                     starIntake.setPower(0.25);
-                    //IntakeServo.setPosition(0.25);
+                    IntakeServo.setPosition(0.25);
                 } else if (gamepad1.x || gamepad2.x) {
                     //X = Turns off Intake
                     starIntake.setPower(0);

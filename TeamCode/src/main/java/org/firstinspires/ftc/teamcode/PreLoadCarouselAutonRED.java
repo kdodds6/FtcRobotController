@@ -113,7 +113,7 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
                 break;
             case Top:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2493);
+                ArmMotor.setTargetPosition(2400);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
 
@@ -146,14 +146,20 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         return ModdedAngle;
     }
 
-    private void SnapToAngle(double TargetAngle){
+    private void SnapToAngle(double TargetAngle, double Timeout){
+        ElapsedTime snapTime = new ElapsedTime();
         double HighSpeedBuffer = 10;
         double HighSpeed = 0.35;
         double LowSpeed = 0.25;
         int Turn = 180;
         double Angle;
 
-        while (!(Math.abs(Turn)<=0.5)) {
+        snapTime.reset();
+        snapTime.startTime();
+
+        if (Timeout == 0) Timeout = 9999;
+
+        while ((snapTime.milliseconds() > Timeout) || !(Math.abs(Turn)<=0.5)) {
             Angle = TargetAngle - GetHeading();
             telemetry.addData("Difference to target:", Angle);
             if (Angle > 180) {
@@ -343,13 +349,13 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         //In Play
 
         if (Camera.getVoltage() < 1.5) {
-            HubPosition = 0;
+            HubPosition = 2;
         }
         if ((Camera.getVoltage() > 1.5) && (Camera.getVoltage() < 2.3)) {
             HubPosition = 1;
         }
         if (Camera.getVoltage() > 2.3) {
-            HubPosition = 2;
+            HubPosition = 0;
         }
 
         //getting to carousel
@@ -372,16 +378,17 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         //going to carousel
         MoveInches(25,0.4,Direction.Left,2000);
         //at carousel
-        SnapToAngle(0);
+        SnapToAngle(0,1000);
         CarouselSpinnersON();
         sleep(2500);
         CarouselSpinnersOFF();
-        SnapToAngle(0);
+        MoveInches(1, 0.4, Direction.Forward,0);
+        SnapToAngle(0,1000);
         //lined up at hub
         MoveInches(2, 0.4, Direction.Forward,0);
         MoveInches(2,0.5,Direction.Right,0);
         MoveInches(45,0.5,Direction.Right,0);
-        SnapToAngle(0);
+        SnapToAngle(0,0);
 
         if (HubPosition == 0) {
             MoveInches(12,0.5,Direction.Forward,2500);
@@ -390,7 +397,7 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
             MoveInches(11,0.5,Direction.Forward,2500);
         }
         if (HubPosition == 2) {
-            MoveInches(12,0.5,Direction.Forward,2500);
+            MoveInches(11,0.5,Direction.Forward,2500);
         }
 
         //dropping off block
@@ -398,10 +405,10 @@ public class PreLoadCarouselAutonRED extends LinearOpMode {
         sleep(1750);
         IntakeOff();
         //MoveInches(10,0.4,Direction.Backward);
-        SnapToAngle(280);
+        SnapToAngle(280,0);
         //MoveInches(10,0.4,Direction.Right);
         MoveInches(75,1,Direction.Forward,4000);
-        SnapToAngle(0);
+        SnapToAngle(0,0);
         MovingArmBack(ArmPositionBack.Floor);
         sleep(2000);
 
