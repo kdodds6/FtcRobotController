@@ -320,31 +320,47 @@ public class TrajectoryTest extends LinearOpMode {
     public void runOpMode() {
     //In Init
 
+        //trajectory and road runner init
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         //creating position
-        Pose2d startPose = new Pose2d(-41,-55,Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-41,-63,Math.toRadians(90));
+        /*
         Pose2d Hub = new Pose2d(-15,-33,Math.toRadians(90));
         Pose2d Carousel = new Pose2d(-56,-50,Math.toRadians(25));
+         */
 
         //telling localizer that this is where we are starting
-        drive.setPoseEstimate(new Pose2d(-41,-55,Math.toRadians(90)));
+        drive.setPoseEstimate(new Pose2d(-41,-63,Math.toRadians(90)));
 
         //building trajectories
         Trajectory TestTrajectory = drive.trajectoryBuilder(startPose)
                 .splineTo(new Vector2d(-56,-50),Math.toRadians(45))
                 .build();
 
-        TrajectorySequence CarouselSequence = drive.trajectorySequenceBuilder(new Pose2d(-41,-55,Math.toRadians(90)))
-                .forward(4)
-                .waitSeconds(2)
-                .strafeLeft(23)
-                .waitSeconds(2)
+        Trajectory ToCarousel = drive.trajectoryBuilder(startPose, true)
+                .splineTo(new Vector2d(-56,50), Math.toRadians(25))
+                .build();
+//-57,-58
+        // .splineTo(new Vector2d(0,0),Math.toRadians(90))
+        TrajectorySequence CarouselSequence = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-65,-56,Math.toRadians(90)))
                 .build();
 
-        int HubPosition = 0;
+        TrajectorySequence Hub = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(-12,-36),Math.toRadians(90))
+                .build();
 
-        //Hardware Maps
+        TrajectorySequence Warehouse = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(10,-40), Math.toRadians(0))
+            //.splineTo(new Vector2d(24,-36), Math.toRadians(90))
+                .build();
+
+        TrajectorySequence Turn90 = drive.trajectorySequenceBuilder(startPose)
+                .turn(Math.toRadians(90))
+            .build();
+
+        //Hardware Map
         LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
         LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
         RightFront = hardwareMap.get(DcMotor.class, "RightFront");
@@ -376,6 +392,14 @@ public class TrajectoryTest extends LinearOpMode {
         //In Play
 
         drive.followTrajectorySequence(CarouselSequence);
+        CarouselSpinnersON();
+        sleep(2500);
+        CarouselSpinnersOFF();
+        drive.followTrajectorySequence(Hub);
+        sleep(2000);
+        drive.followTrajectorySequence(Warehouse);
+        MoveInches(40,1,Direction.Forward,3000);
+
         /*
         if (Camera.getVoltage() < 1.5) {
             HubPosition = 2;
