@@ -286,7 +286,7 @@ public class FieldCentricTest extends LinearOpMode {
                     //arm= 3rd tier (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(1000);
+                    armMotor.setTargetPosition(975);
                     //760-1000
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("up", 1);
@@ -327,7 +327,7 @@ public class FieldCentricTest extends LinearOpMode {
                 } else if (gamepad1.b || gamepad2.b) {
                     //B = activate outake
                     starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-                    starIntake.setPower(0.25);
+                    starIntake.setPower(0.40);
                     IntakeServo.setPosition(0.25);
                 } else if (gamepad1.x || gamepad2.x) {
                     //X = Turns off Intake

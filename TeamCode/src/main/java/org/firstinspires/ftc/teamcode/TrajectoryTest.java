@@ -71,8 +71,9 @@ public class TrajectoryTest extends LinearOpMode {
     //Functions
     private void OutakeOn() {
         StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-        StarIntake.setPower(0.45);
+        StarIntake.setPower(0.65);
     }
+
     private void IntakeOff() {
         StarIntake.setPower(0);
     }
@@ -81,18 +82,26 @@ public class TrajectoryTest extends LinearOpMode {
             case Floor:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(0);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 break;
             case Bottom:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(380);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 break;
             case Middle:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(760);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 break;
             case Top:
                 ArmMotor.setPower(0.75);
                 ArmMotor.setTargetPosition(950);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 break;
 
             default:
@@ -108,17 +117,17 @@ public class TrajectoryTest extends LinearOpMode {
                 break;
             case Bottom:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2989);
+                ArmMotor.setTargetPosition(2950);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Middle:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2742);
+                ArmMotor.setTargetPosition(2700);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case Top:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2400);
+                ArmMotor.setTargetPosition(2375);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
 
@@ -348,11 +357,30 @@ public class TrajectoryTest extends LinearOpMode {
                 .build();
 
         TrajectorySequence Hub = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(-12,-36),Math.toRadians(90))
+                .splineTo(new Vector2d(-12,-50),Math.toRadians(90))
+                .build();
+
+        TrajectorySequence GoToTop = drive.trajectorySequenceBuilder(Hub.end())
+                //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
+                .forward(8)
+                .build();
+
+        TrajectorySequence GoToMiddle = drive.trajectorySequenceBuilder(Hub.end())
+                //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
+                .forward(6)
+                .build();
+
+        TrajectorySequence GoToLow = drive.trajectorySequenceBuilder(Hub.end())
+                //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
+                .forward(6)
                 .build();
 
         TrajectorySequence Warehouse = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(10,-40), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d (10,-69,Math.toRadians(0)))
+                .strafeRight(2)
+                .lineToLinearHeading(new Pose2d (45,-69,Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d (45,-48,Math.toRadians(90)))
+                //.splineTo(new Vector2d(10,-40), Math.toRadians(0))
             //.splineTo(new Vector2d(24,-36), Math.toRadians(90))
                 .build();
 
@@ -391,84 +419,56 @@ public class TrajectoryTest extends LinearOpMode {
         waitForStart();
         //In Play
 
+
+        int HubPosition = 0;
+
+        if (Camera.getVoltage() < 1.6) {
+            //Left position is bottom
+            HubPosition = 2;
+        }
+        if ((Camera.getVoltage() > 1.6) && (Camera.getVoltage() < 2.3)) {
+            //Middle position is middle
+            HubPosition = 1;
+        }
+        if (Camera.getVoltage() > 2.3) {
+            //Right position is top
+            HubPosition = 0;
+        }
+
+        telemetry.addData("Detected level", HubPosition);
+        telemetry.update();
+
         drive.followTrajectorySequence(CarouselSequence);
         CarouselSpinnersON();
         sleep(2500);
         CarouselSpinnersOFF();
         drive.followTrajectorySequence(Hub);
-        sleep(2000);
-        drive.followTrajectorySequence(Warehouse);
-        MoveInches(40,1,Direction.Forward,3000);
 
-        /*
-        if (Camera.getVoltage() < 1.5) {
-            HubPosition = 2;
-        }
-        if ((Camera.getVoltage() > 1.5) && (Camera.getVoltage() < 2.3)) {
-            HubPosition = 1;
-        }
-        if (Camera.getVoltage() > 2.3) {
-            HubPosition = 0;
-        }
-
-        //getting to carousel
-        //MoveInches(8,0.4, Direction.Forward,0);
 
         if (HubPosition == 0) {
             MovingArmFront(ArmPositionFront.Top);
             sleep(1000);
+            drive.followTrajectorySequence(GoToTop);
+
         }
         if (HubPosition == 1) {
             MovingArmFront(ArmPositionFront.Middle);
-            sleep(1000);
+            sleep(1500);
+            drive.followTrajectorySequence(GoToMiddle);
+
         }
         if (HubPosition == 2) {
             MovingArmFront(ArmPositionFront.Bottom);
-            sleep(1000);
+            sleep(1500);
+            drive.followTrajectorySequence(GoToLow);
         }
-
-        MoveInches(4,0.4, Direction.Backward,0);
-        //going to carousel
-        MoveInches(25,0.4, Direction.Left,2000);
-        //at carousel
-        SnapToAngle(0,1000);
-        CarouselSpinnersON();
-        sleep(2500);
-        CarouselSpinnersOFF();
-        MoveInches(1, 0.4, Direction.Forward,0);
-        SnapToAngle(0,1000);
-        //lined up at hub
-        MoveInches(2, 0.4, Direction.Forward,0);
-        MoveInches(2,0.5, Direction.Right,0);
-        MoveInches(45,0.5, Direction.Right,0);
-        SnapToAngle(0,0);
-
-        if (HubPosition == 0) {
-            MoveInches(12,0.5, Direction.Forward,2500);
-        }
-        if (HubPosition == 1) {
-            MoveInches(11,0.5, Direction.Forward,2500);
-        }
-        if (HubPosition == 2) {
-            MoveInches(11,0.5, Direction.Forward,2500);
-        }
-
-        //dropping off block
         OutakeOn();
         sleep(1750);
         IntakeOff();
-        //MoveInches(10,0.4,Direction.Backward);
-        SnapToAngle(280,0);
-        //MoveInches(10,0.4,Direction.Right);
-        MoveInches(75,1, Direction.Forward,4000);
-        SnapToAngle(0,0);
+
+        drive.followTrajectorySequence(Warehouse);
         MovingArmBack(ArmPositionBack.Floor);
         sleep(2000);
-        */
-
-
-
-
 
     }
 }
