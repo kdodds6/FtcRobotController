@@ -270,6 +270,7 @@ public class FieldCentricTest extends LinearOpMode {
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("down", 1);
                     telemetry.update();
+                    WristServo.setPosition(0.55);
                 } else if ((gamepad1.dpad_right && (RightTrigger1 < 0.3)) || (gamepad2.dpad_right && (RightTrigger2 < 0.3))) {
                     //arm = 1st tier (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -309,14 +310,15 @@ public class FieldCentricTest extends LinearOpMode {
                     //arm = 1st tier (Front)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(3238);
-                    WristServo.setPosition(0.13);
+                    WristServo.setPosition(0.2);
+                    sleep(5000);
+                    armMotor.setTargetPosition(3150);
                 } else if (gamepad1.dpad_left && (RightTrigger1 > 0.3) || (gamepad2.dpad_left && (RightTrigger2 > 0.3))) {
                     //arm = 2nd tier (Front)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(3141);
-                    WristServo.setPosition(0.125);
+                    armMotor.setTargetPosition(3000);
+                    WristServo.setPosition(0.2);
                 } else if (gamepad1.dpad_up && (RightTrigger1 > 0.3) || (gamepad2.dpad_up && (RightTrigger2 > 0.3))) {
                     //arm = 3rd tier (Front)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -338,7 +340,7 @@ public class FieldCentricTest extends LinearOpMode {
                     //B = activate outake
                     starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
                     starIntake.setPower(0.40);
-                    IntakeServo.setPosition(0.3);
+                    IntakeServo.setPosition(0.35);
                 } else if (gamepad1.x || gamepad2.x) {
                     //X = Turns off Intake
                     starIntake.setPower(0);
