@@ -31,6 +31,8 @@ public class FieldCentricTest extends LinearOpMode {
     enum Direction {Forward, Backward, Left, Right}
     private Servo IntakeServo;
     private Servo WristServo;
+    private Servo LeftDropDown;
+    private Servo RightDropDown;
 
     //Functions (Get Heading)
     private double GetHeading() {
@@ -154,6 +156,8 @@ public class FieldCentricTest extends LinearOpMode {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
             IntakeServo = hardwareMap.get(Servo.class, "IntakeServo");
             WristServo = hardwareMap.get(Servo.class, "WristServo");
+            LeftDropDown = hardwareMap.get(Servo.class, "LeftDropDown");
+            RightDropDown = hardwareMap.get(Servo.class, "RightDropDown");
 
             //IMU init
             BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
@@ -266,11 +270,12 @@ public class FieldCentricTest extends LinearOpMode {
                     //arm = Floor (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
-                    armMotor.setTargetPosition(0);
+                    armMotor.setTargetPosition(150);
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("down", 1);
                     telemetry.update();
-                    WristServo.setPosition(0.55);
+                    WristServo.setPosition(0.65);
+
                 } else if ((gamepad1.dpad_right && (RightTrigger1 < 0.3)) || (gamepad2.dpad_right && (RightTrigger2 < 0.3))) {
                     //arm = 1st tier (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -330,6 +335,7 @@ public class FieldCentricTest extends LinearOpMode {
                 //telemetry.addData("Arm Position", Arm.getCurrentPosition());
                 //telemetry.addData("TRIGGER VALUE", RightTrigger);
 
+                /*
                 if (gamepad1.a || gamepad2.a) {
                     //A = activates intake
                     starIntake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -346,7 +352,12 @@ public class FieldCentricTest extends LinearOpMode {
                     starIntake.setPower(0);
                     IntakeServo.setPosition(0);
                 }
+                */
 
+                if(gamepad1.a) {
+                    LeftDropDown.setPosition(0.25);
+                    RightDropDown.setPosition(0);
+                }
                 if (gamepad1.y) {
                     LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
                     rightCarouselSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -357,14 +368,14 @@ public class FieldCentricTest extends LinearOpMode {
                     LeftCarouselSpinner.setPower(0);
                 }
 
-                /*
+
                 if(gamepad1.left_bumper) {
                     armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     armMotor.setPower(0.1);
                     ArmNotReset = true;
                 }
 
-                 */
+
                 if(gamepad1.right_bumper) {
                     armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
                     armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -378,11 +389,14 @@ public class FieldCentricTest extends LinearOpMode {
                     ArmNotReset = false;
                 }
 
+                /*
                 if(gamepad1.left_bumper) {
 
                     WristPosition = WristPosition + 0.001;
                     WristServo.setPosition(WristPosition);
                 }
+
+                 */
 
             }
         }
