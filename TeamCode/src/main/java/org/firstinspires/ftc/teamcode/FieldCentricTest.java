@@ -355,9 +355,23 @@ public class FieldCentricTest extends LinearOpMode {
                 */
 
                 if(gamepad1.a) {
-                    LeftDropDown.setPosition(0.25);
+                    //Down
+                    starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+                    IntakeServo.setDirection(Servo.Direction.REVERSE);
+                    starIntake.setPower(0.75);
+                    LeftDropDown.setPosition(0.09);
+                    RightDropDown.setPosition(0.6);
+                    IntakeServo.setPosition(0.2);
+                }
+
+                if(gamepad1.b) {
+                    //Up
+                    starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+                    starIntake.setPower(0);
+                    LeftDropDown.setPosition(0.63);
                     RightDropDown.setPosition(0);
                 }
+
                 if (gamepad1.y) {
                     LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
                     rightCarouselSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -369,6 +383,15 @@ public class FieldCentricTest extends LinearOpMode {
                 }
 
 
+                if(gamepad1.left_bumper){
+                    //Open Jaw(Outake)
+                    IntakeServo.setPosition(0.35);
+                }
+                if(gamepad1.right_bumper){
+                    //Close Jaw
+                    IntakeServo.setPosition(0);
+                }
+                /*
                 if(gamepad1.left_bumper) {
                     armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     armMotor.setPower(0.1);
