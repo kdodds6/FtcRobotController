@@ -244,6 +244,7 @@ public class FieldCentricTest extends LinearOpMode {
                     double ModdedHorizontal = Length * Math.cos(DriveAngle / 180 * Math.PI);
 
                     //telemetry to test
+                    /*
                     telemetry.addData("IMU Y", IMUy);
                     telemetry.addData("IMU Z", IMUz);
                     telemetry.addData("IMU X", IMUx);
@@ -256,6 +257,8 @@ public class FieldCentricTest extends LinearOpMode {
                     telemetry.addData("Position", WristPosition);
                     telemetry.update();
 
+                     */
+
                     //setting powers
                     RightFront.setPower((-Pivot) - (ModdedVertical - ModdedHorizontal));
                     RightRear.setPower((-Pivot) - (ModdedVertical + ModdedHorizontal));
@@ -266,70 +269,114 @@ public class FieldCentricTest extends LinearOpMode {
                 double RightTrigger1 = gamepad1.right_trigger;
                 double RightTrigger2 = gamepad2.right_trigger;
 
+
+                boolean IntakeStates = false;
+
+                //Intake Position = 180
+                //Arm Position = 1140
+
+
+                double WristAngle = 0;
+
                 if ((gamepad1.dpad_down && (RightTrigger1 < 0.3)) || (gamepad2.dpad_down && (RightTrigger2 < 0.3))) {
-                    //arm = Floor (Back)
+                    //arm = intake
+                    //Move intake (Down)
+                    LeftDropDown.setPosition(0.11);
+                    RightDropDown.setPosition(0.58);
+                    //Start Intake
+                    starIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+                    starIntake.setPower(0.75);
+                    //Move Arm
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(150);
-                    telemetry.addData("Arm Position", armMotor.getCurrentPosition());
-                    telemetry.addData("down", 1);
-                    telemetry.update();
-                    WristServo.setPosition(0.65);
+                    //Move servo
+                    WristServo.setPosition(0.5);
 
-                } else if ((gamepad1.dpad_right && (RightTrigger1 < 0.3)) || (gamepad2.dpad_right && (RightTrigger2 < 0.3))) {
+                }
+                /*else if ((gamepad1.dpad_right && (RightTrigger1 < 0.3)) || (gamepad2.dpad_right && (RightTrigger2 < 0.3))) {
                     //arm = 1st tier (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(312);
-                    WristServo.setPosition(0.48);
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("right", 1);
                     telemetry.update();
-                } else if ((gamepad1.dpad_left && (RightTrigger1 < 0.3)) || (gamepad2.dpad_left && (RightTrigger2 < 0.3))) {
+                    WristAngle = 0.48;
+                    IntakeStates = true;
+                }
+
+                else if ((gamepad1.dpad_left && (RightTrigger1 < 0.3)) || (gamepad2.dpad_left && (RightTrigger2 < 0.3))) {
+
                     //arm = 2nd tier (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(705);
-                    WristServo.setPosition(0.45);
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("left", 1);
                     telemetry.update();
-                } else if ((gamepad1.dpad_up && (RightTrigger1 < 0.3)) || (gamepad2.dpad_up && (RightTrigger2 < 0.3))) {
+                    WristAngle = 0.45;
+                    IntakeStates = true;
+                }
+
+
+
+                else if ((gamepad1.dpad_up && (RightTrigger1 < 0.3)) || (gamepad2.dpad_up && (RightTrigger2 < 0.3))) {
+
                     //arm= 3rd tier (Back)
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(1208);
-                    WristServo.setPosition(0.32);
                     //760-1000
                     telemetry.addData("Arm Position", armMotor.getCurrentPosition());
                     telemetry.addData("up", 1);
                     telemetry.update();
-                } else if (gamepad1.dpad_down && (RightTrigger1 > 0.3) || (gamepad2.dpad_down && (RightTrigger2 > 0.3))) {
+                    WristAngle = 0.32;
+                    IntakeStates = true;
+                }
+
+                 */
+                /*
+                    else if (gamepad1.dpad_down && (RightTrigger1 > 0.3) || (gamepad2.dpad_down && (RightTrigger2 > 0.3))) {
                     //arm = Floor (Front)
                     //IntakeServo.setDirection(Servo.Direction.REVERSE);
                     //IntakeServo.setPosition(0);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(3290);
-                } else if (gamepad1.dpad_right && (RightTrigger1 > 0.3) || (gamepad2.dpad_right && (RightTrigger2 > 0.3))) {
+                    IntakeStates = true;
+                }
+                */
+                else if (gamepad1.dpad_right && (RightTrigger1 > 0.3) || (gamepad2.dpad_right && (RightTrigger2 > 0.3))) {
                     //arm = 1st tier (Front)
+                    LeftDropDown.setPosition(0.63);
+                    RightDropDown.setPosition(0);
+
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
-                    WristServo.setPosition(0.2);
-                    sleep(5000);
                     armMotor.setTargetPosition(3150);
+                    WristAngle = 0.2;
+                    IntakeStates = true;
                 } else if (gamepad1.dpad_left && (RightTrigger1 > 0.3) || (gamepad2.dpad_left && (RightTrigger2 > 0.3))) {
                     //arm = 2nd tier (Front)
+                    LeftDropDown.setPosition(0.63);
+                    RightDropDown.setPosition(0);
+
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(3000);
-                    WristServo.setPosition(0.2);
+                    WristAngle = 0.2;
+                    IntakeStates = true;
                 } else if (gamepad1.dpad_up && (RightTrigger1 > 0.3) || (gamepad2.dpad_up && (RightTrigger2 > 0.3))) {
                     //arm = 3rd tier (Front)
+                    LeftDropDown.setPosition(0.63);
+                    RightDropDown.setPosition(0);
+
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(ArmPower);
                     armMotor.setTargetPosition(2400);
-                    WristServo.setPosition(0.37);
+                    WristAngle = 0.37;
+                    IntakeStates = true;
                 }
 
                 //telemetry.addData("Arm Position", Arm.getCurrentPosition());
@@ -354,13 +401,36 @@ public class FieldCentricTest extends LinearOpMode {
                 }
                 */
 
+
+
+                if(IntakeStates){
+                    telemetry.addData("in if statement", 2);
+                    telemetry.addData("ArmPosition",armMotor.getCurrentPosition());
+                    telemetry.update();
+                    if(armMotor.getCurrentPosition() > 1000){
+                        telemetry.addData("in if statement", 1);
+                        telemetry.update();
+                        //Intake Up
+                        LeftDropDown.setPosition(0.63);
+                        RightDropDown.setPosition(0);
+                        //Move Wrist
+                        WristServo.setPosition(WristAngle);
+                        //Stop Intake
+                        starIntake.setPower(0);
+                        IntakeStates = false;
+                    }
+                }
+
+                //Inbetween stages
+                //L = 0.25 R = 0.41
+
                 if(gamepad1.a) {
                     //Down
                     starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
                     IntakeServo.setDirection(Servo.Direction.REVERSE);
                     starIntake.setPower(0.75);
-                    LeftDropDown.setPosition(0.09);
-                    RightDropDown.setPosition(0.6);
+                    LeftDropDown.setPosition(0.13);
+                    RightDropDown.setPosition(0.56);
                     IntakeServo.setPosition(0.2);
                 }
 
@@ -419,6 +489,17 @@ public class FieldCentricTest extends LinearOpMode {
                     WristServo.setPosition(WristPosition);
                 }
 
+                 */
+
+                /*
+                else if (gamepad1.dpad_down && (RightTrigger1 > 0.3) || (gamepad2.dpad_down && (RightTrigger2 > 0.3))) {
+                    //arm = Floor (Front)
+                    //IntakeServo.setDirection(Servo.Direction.REVERSE);
+                    //IntakeServo.setPosition(0);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armMotor.setPower(ArmPower);
+                    armMotor.setTargetPosition(3290);
+                    IntakeStates = true;
                  */
 
             }
