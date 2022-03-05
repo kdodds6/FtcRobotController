@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import java.lang.reflect.Field;
 
 @TeleOp
@@ -34,6 +37,7 @@ public class FieldCentricTest extends LinearOpMode {
     private Servo WristServo;
     private Servo LeftDropDown;
     private Servo RightDropDown;
+    private DistanceSensor ColorSensorV3_DistanceSensor;
 
     //Functions (Get Heading)
     private double GetHeading() {
@@ -151,6 +155,8 @@ public class FieldCentricTest extends LinearOpMode {
             ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
             double WristAngle = 0;
             boolean MoveWrist = false;
+            double DistanceSensor;
+            boolean Intaking = false;
 
             //Mapping Config objects to variables(Below)
             LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
@@ -166,6 +172,7 @@ public class FieldCentricTest extends LinearOpMode {
             WristServo = hardwareMap.get(Servo.class, "WristServo");
             LeftDropDown = hardwareMap.get(Servo.class, "LeftDropDown");
             RightDropDown = hardwareMap.get(Servo.class, "RightDropDown");
+            ColorSensorV3_DistanceSensor = hardwareMap.get(DistanceSensor.class, "ColorSensorV3");
 
             //IMU init
             BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
@@ -294,6 +301,7 @@ public class FieldCentricTest extends LinearOpMode {
                     runtime.reset();
 
                     IntakeWait = true;
+                    Intaking = true;
                     /*
                     LeftDropDown.setPosition(0.1);
                     RightDropDown.setPosition(0.6);
@@ -379,6 +387,7 @@ public class FieldCentricTest extends LinearOpMode {
                     armMotor.setTargetPosition(3150);
                     WristAngle = 0.2;
                     IntakeStates = true;
+
                 } else if (gamepad1.dpad_left && (RightTrigger1 > 0.3) || (gamepad2.dpad_left && (RightTrigger2 > 0.3))) {
                     WristServo.setPosition(0.3);
 
@@ -458,9 +467,12 @@ public class FieldCentricTest extends LinearOpMode {
                         //Move Arm
                         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         armMotor.setPower(ArmPower);
-                        armMotor.setTargetPosition(275);
+                        armMotor.setTargetPosition(325);
                         //Move servo
                         WristServo.setPosition(0.2);
+                        //Move Jaw to Intake
+                        IntakeServo.setDirection(Servo.Direction.REVERSE);
+                        IntakeServo.setPosition(0.2);
 
                         IntakeWait = false;
                         MoveWrist = true;
@@ -479,14 +491,37 @@ public class FieldCentricTest extends LinearOpMode {
                 //Inbetween stages
                 //L = 0.25 R = 0.41
 
-                if(gamepad1.x){
+                if(gamepad2.b){
+                    IntakeServo.setDirection(Servo.Direction.REVERSE);
+                    IntakeServo.setPosition(0.2);
+                    Intaking = true;
+                }
+                if(gamepad2.x){
                     //Turns out intake, closes box
                     starIntake.setPower(0);
                     IntakeServo.setDirection(Servo.Direction.REVERSE);
                     IntakeServo.setPosition(0);
+                    Intaking = false;
                 }
 
-                if(gamepad1.a) {
+                if(gamepad2.a){
+                    //outake jaw
+                    IntakeServo.setDirection(Servo.Direction.REVERSE);
+                    IntakeServo.setPosition(0.35);
+                }
+
+                DistanceSensor = ColorSensorV3_DistanceSensor.getDistance(DistanceUnit.MM);
+                if(Intaking && DistanceSensor < 24){
+                    //move jaw to outake
+                    IntakeServo.setDirection(Servo.Direction.REVERSE);
+                    IntakeServo.setPosition(0);
+                    Intaking = false;
+;                }
+
+
+                /*
+                if(gamepad2.a) {
+
                     //Down
                     starIntake.setDirection(DcMotorSimple.Direction.FORWARD);
                     IntakeServo.setDirection(Servo.Direction.REVERSE);
@@ -504,6 +539,8 @@ public class FieldCentricTest extends LinearOpMode {
                     RightDropDown.setPosition(0);
                 }
 
+
+                 */
                 if (gamepad1.y) {
                     LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
                     rightCarouselSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -515,6 +552,7 @@ public class FieldCentricTest extends LinearOpMode {
                 }
 
 
+                /*
                 if(gamepad1.left_bumper){
                     //Open Jaw(Outake)
                     IntakeServo.setPosition(0.35);
