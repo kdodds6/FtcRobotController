@@ -295,8 +295,8 @@ public class FieldCentricTest extends LinearOpMode {
                 if ((gamepad1.dpad_down && (RightTrigger1 < 0.3)) || (gamepad2.dpad_down && (RightTrigger2 < 0.3))) {
                     //arm = intake
                     //Move intake (Down)
-                    LeftDropDown.setPosition(0.1);
-                    RightDropDown.setPosition(0.6);
+                    LeftDropDown.setPosition(0.06);
+                    RightDropDown.setPosition(0.58);
 
                     runtime.reset();
 
@@ -449,7 +449,7 @@ public class FieldCentricTest extends LinearOpMode {
                         telemetry.addData("in if statement", 1);
                         telemetry.update();
                         //Intake Up
-                        LeftDropDown.setPosition(0.63);
+                        LeftDropDown.setPosition(0.655);
                         RightDropDown.setPosition(0);
                         //Move Wrist
                         WristServo.setPosition(WristAngle);
@@ -460,7 +460,7 @@ public class FieldCentricTest extends LinearOpMode {
                 }
 
                 if(IntakeWait == true) {
-                    if(runtime.time() > 300){
+                    if(runtime.time() > 100){
                         //Start Intake
                         starIntake.setDirection(DcMotorSimple.Direction.REVERSE);
                         starIntake.setPower(0.75);
@@ -469,7 +469,7 @@ public class FieldCentricTest extends LinearOpMode {
                         armMotor.setPower(ArmPower);
                         armMotor.setTargetPosition(325);
                         //Move servo
-                        WristServo.setPosition(0.2);
+                        WristServo.setPosition(0.35);
                         //Move Jaw to Intake
                         IntakeServo.setDirection(Servo.Direction.REVERSE);
                         IntakeServo.setPosition(0.2);
@@ -511,12 +511,14 @@ public class FieldCentricTest extends LinearOpMode {
                 }
 
                 DistanceSensor = ColorSensorV3_DistanceSensor.getDistance(DistanceUnit.MM);
-                if(Intaking && DistanceSensor < 24){
+                if(Intaking && DistanceSensor < 34) {
                     //move jaw to outake
                     IntakeServo.setDirection(Servo.Direction.REVERSE);
                     IntakeServo.setPosition(0);
                     Intaking = false;
-;                }
+
+                    starIntake.setPower(0);
+                }
 
 
                 /*
