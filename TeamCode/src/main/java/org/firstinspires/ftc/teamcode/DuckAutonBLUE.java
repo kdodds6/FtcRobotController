@@ -43,7 +43,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 //@Disabled
 public class DuckAutonBLUE extends LinearOpMode {
 
-
     //Declaring Objects and enums
     private DcMotor LeftFront;
     private DcMotor LeftRear;

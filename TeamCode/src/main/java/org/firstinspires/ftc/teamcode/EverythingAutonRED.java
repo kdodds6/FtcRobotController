@@ -40,36 +40,35 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.analysis.function.Power;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.SabUtils;
 
 @Autonomous
 //@Disabled
 public class EverythingAutonRED extends LinearOpMode {
 
-
     //Declaring Objects and enums
-    private DcMotor LeftFront;
-    private DcMotor LeftRear;
-    private DcMotor RightFront;
-    private DcMotor RightRear;
-    private BNO055IMU imu;
-    enum Direction {Forward, Backward, Left, Right}
-    private DcMotor rightCarouselSpinner;
-    private DcMotor LeftCarouselSpinner;
-    enum ArmPositionBack {Floor,Bottom,Middle,Top}
-    enum ArmPositionFront {Floor,Bottom,Middle,Top}
-    enum IntakeState {Outake,Intake,Off}
-    private DcMotor ArmMotor;
-    private DcMotor StarIntake;
-    private AnalogInput Camera;
-
+    //private DcMotor LeftFront;
+    //private DcMotor LeftRear;
+    //private DcMotor RightFront;
+    //private DcMotor RightRear;
+    //private BNO055IMU imu;
+    //enum Direction {Forward, Backward, Left, Right}
+    //private DcMotor rightCarouselSpinner;
+    //private DcMotor LeftCarouselSpinner;
+    //enum ArmPositionBack {Floor,Bottom,Middle,Top}
+    //enum ArmPositionFront {Floor,Bottom,Middle,Top}
+    //private DcMotor ArmMotor;
+    //private DcMotor StarIntake;
+    //private AnalogInput Camera;
 
     //Functions
-    private void OutakeOn() {
+    /*private void OutakeOn() {
         StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
         StarIntake.setPower(0.65);
     }
@@ -146,6 +145,8 @@ public class EverythingAutonRED extends LinearOpMode {
         rightCarouselSpinner.setPower(0);
         LeftCarouselSpinner.setPower(0);
     }
+
+
     private double GetHeading() {
         float IMUAngle;
         float ModdedAngle;
@@ -274,58 +275,50 @@ public class EverythingAutonRED extends LinearOpMode {
 
             }
 
-                /*telemetry.addData("power", Power);
-                telemetry.addData("TargetInches", TargetDistance);
-                telemetry.update();
-                 */
+        //Wheel diameter = 3.78 inches
+        //537.7 = Encoder Counts per Revolution
+        //Calculating Circumference (d * pi)
+        double Circumference = 3.78 * 3.14;
+        //(Encoder Counts per Revolution * Gear ratio (1:1)) / Circumference
+        double EncoderCountsPerInch = (537.7 * 1) / Circumference;
+        double FinalEncoderCounts = EncoderCountsPerInch * TargetDistance;
+        //Modes
+        LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Target Positions
+        LeftFront.setTargetPosition((int) FinalEncoderCounts);
+        LeftRear.setTargetPosition((int) FinalEncoderCounts);
+        RightRear.setTargetPosition((int) FinalEncoderCounts);
+        RightFront.setTargetPosition((int) FinalEncoderCounts);
+        //More Modes
+        LeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LeftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                //Calculations
-                //Wheel diameter = 3.78 inches
-                //537.7 = Encoder Counts per Revolution
-                //Calculating Circumference (d * pi)
-                double Circumference = 3.78 * 3.14;
-                //(Encoder Counts per Revolution * Gear ratio (1:1)) / Circumference
-                double EncoderCountsPerInch = (537.7 * 1) / Circumference;
-                double FinalEncoderCounts = EncoderCountsPerInch * TargetDistance;
-                //Modes
-                LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                LeftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                RightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                //Target Positions
-                LeftFront.setTargetPosition((int) FinalEncoderCounts);
-                LeftRear.setTargetPosition((int) FinalEncoderCounts);
-                RightRear.setTargetPosition((int) FinalEncoderCounts);
-                RightFront.setTargetPosition((int) FinalEncoderCounts);
-                //More Modes
-                LeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                LeftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Power
+        runTime.reset();
+        runTime.startTime();
 
-                //Power
-                runTime.reset();
-                runTime.startTime();
-
-                LeftFront.setPower(Power);
-                LeftRear.setPower(Power);
-                RightRear.setPower(Power);
-                RightFront.setPower(Power);
-                if (Timeout != 0) {
-                    while ((runTime.milliseconds() < Timeout) || !(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
-                        sleep(10);
-                    }
-                }
-                else {
-                    while (!(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
-                        sleep(10);
-                    }
-                }
+        LeftFront.setPower(Power);
+        LeftRear.setPower(Power);
+        RightRear.setPower(Power);
+        RightFront.setPower(Power);
+        if (Timeout != 0) {
+            while ((runTime.milliseconds() < Timeout) || !(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
+                sleep(10);
+            }
+        }
+        else {
+            while (!(!LeftFront.isBusy() && !LeftRear.isBusy() && !RightFront.isBusy() && !RightRear.isBusy())) {
+                sleep(10);
+            }
+        }
 
     }
-
-
-
+*/
     public void runOpMode() {
     //In Init
 
@@ -389,48 +382,41 @@ public class EverythingAutonRED extends LinearOpMode {
             .build();
 
         //Hardware Map
-        LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
-        LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
-        RightFront = hardwareMap.get(DcMotor.class, "RightFront");
-        RightRear = hardwareMap.get(DcMotor.class, "RightRear");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        rightCarouselSpinner = hardwareMap.get(DcMotor.class, "RightCarouselSpinner");
-        LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
-        ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
-        StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
-        Camera = hardwareMap.get(AnalogInput.class, "Camera");
 
+        //LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
+        //LeftRear = hardwareMap.get(DcMotor.class, "LeftRear");
+        //RightFront = hardwareMap.get(DcMotor.class, "RightFront");
+        //RightRear = hardwareMap.get(DcMotor.class, "RightRear");
+        //imu = hardwareMap.get(BNO055IMU.class, "imu");
+        SabUtils.rightCarouselSpinner = hardwareMap.get(DcMotor.class, "RightCarouselSpinner");
+        SabUtils.LeftCarouselSpinner = hardwareMap.get(DcMotor.class, "LeftCarouselSpinner");
+        SabUtils.ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
+        SabUtils.StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
+        SabUtils.Camera = hardwareMap.get(AnalogInput.class, "Camera");
 
-        //IMU init
-        //BNO055IMU.Parameters ImuParameters = new BNO055IMU.Parameters();
-        //imu.initialize(ImuParameters);
-
-        rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        
-
+        SabUtils.rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        SabUtils.LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        SabUtils.ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SabUtils.StarIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Directions
-        ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        SabUtils.ArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        SabUtils.StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
 
         waitForStart();
         //In Play
 
-
         int HubPosition = 0;
 
-        if (Camera.getVoltage() < 1.6) {
+        if (SabUtils.Camera.getVoltage() < 1.6) {
             //Left position is bottom
             HubPosition = 2;
         }
-        if ((Camera.getVoltage() > 1.6) && (Camera.getVoltage() < 2.3)) {
+        if ((SabUtils.Camera.getVoltage() > 1.6) && (SabUtils.Camera.getVoltage() < 2.3)) {
             //Middle position is middle
             HubPosition = 1;
         }
-        if (Camera.getVoltage() > 2.3) {
+        if (SabUtils.Camera.getVoltage() > 2.3) {
             //Right position is top
             HubPosition = 0;
         }
@@ -439,35 +425,34 @@ public class EverythingAutonRED extends LinearOpMode {
         telemetry.update();
 
         drive.followTrajectorySequence(CarouselSequence);
-        CarouselSpinnersON();
+        SabUtils.CarouselSpinnersON();
         sleep(2500);
-        CarouselSpinnersOFF();
+        SabUtils.CarouselSpinnersOFF();
         drive.followTrajectorySequence(Hub);
 
-
         if (HubPosition == 0) {
-            MovingArmFront(ArmPositionFront.Top);
+            SabUtils.MovingArmFront(SabUtils.ArmPositionFront.Top);
             sleep(1000);
             drive.followTrajectorySequence(GoToTop);
 
         }
         if (HubPosition == 1) {
-            MovingArmFront(ArmPositionFront.Middle);
+            SabUtils.MovingArmFront(SabUtils.ArmPositionFront.Middle);
             sleep(1500);
             drive.followTrajectorySequence(GoToMiddle);
 
         }
         if (HubPosition == 2) {
-            MovingArmFront(ArmPositionFront.Bottom);
+            SabUtils.MovingArmFront(SabUtils.ArmPositionFront. Bottom);
             sleep(1500);
             drive.followTrajectorySequence(GoToLow);
         }
-        OutakeOn();
+        SabUtils.OutakeOn();
         sleep(1750);
-        IntakeOff();
+        SabUtils.IntakeOff();
 
         drive.followTrajectorySequence(Warehouse);
-        MovingArmBack(ArmPositionBack.Floor);
+        SabUtils.MovingArmBack(SabUtils.ArmPositionBack.Floor);
         sleep(2000);
 
     }
