@@ -48,7 +48,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
 //@Disabled
-public class TrajectoryTest extends LinearOpMode {
+public class EverythingAutonRED extends LinearOpMode {
 
 
     //Declaring Objects and enums
