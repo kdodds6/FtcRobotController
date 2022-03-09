@@ -12,8 +12,8 @@ public class SabUtils {
     public static DcMotor ArmMotor;
     public static AnalogInput Camera;
 
-    public static enum ArmPositionBack {Floor,Bottom,Middle,Top}
-    public static enum ArmPositionFront {Floor,Bottom,Middle,Top}
+    public enum ArmPositionBack {Floor,Bottom,Middle,Top}
+    public enum ArmPositionFront {Floor,Bottom,Middle,Top}
 
     public static void OutakeOn() {
         StarIntake.setDirection(DcMotorSimple.Direction.FORWARD);
