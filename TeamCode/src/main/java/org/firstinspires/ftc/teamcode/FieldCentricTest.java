@@ -385,7 +385,7 @@ public class FieldCentricTest extends LinearOpMode {
                     StoppingIntake = true;
                 }
                 if(StoppingIntake){
-                    if(IntakeDelay.time() > 250){
+                    if(IntakeDelay.time() > 300){
                         starIntake.setPower(0);
                         StoppingIntake = false;
                     }

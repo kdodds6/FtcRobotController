@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -44,7 +45,7 @@ import org.firstinspires.ftc.teamcode.util.SabUtils;
 
 @Autonomous
 //@Disabled
-public class StoargeRED extends LinearOpMode {
+public class StorageRED extends LinearOpMode {
 
     public void runOpMode() {
     //In Init
@@ -82,12 +83,12 @@ public class StoargeRED extends LinearOpMode {
 
         TrajectorySequence GoToMiddle = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(6)
+                .forward(7.5)
                 .build();
 
         TrajectorySequence GoToLow = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(6)
+                .forward(9)
                 .build();
 
         TrajectorySequence Warehouse = drive.trajectorySequenceBuilder(startPose)
@@ -95,6 +96,11 @@ public class StoargeRED extends LinearOpMode {
                 .strafeRight(2)
                 .lineToLinearHeading(new Pose2d (45,-69,Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d (45,-48,Math.toRadians(90)))
+                .build();
+
+        TrajectorySequence ToStorage = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d (-36,-60,Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d (-68,-30,Math.toRadians(90)))
                 .build();
 
         TrajectorySequence Turn90 = drive.trajectorySequenceBuilder(startPose)
@@ -107,6 +113,7 @@ public class StoargeRED extends LinearOpMode {
         SabUtils.ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
         SabUtils.StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
         SabUtils.Camera = hardwareMap.get(AnalogInput.class, "Camera");
+        SabUtils.WristServo = hardwareMap.get(Servo.class, "WristServo");
 
         SabUtils.rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         SabUtils.LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -120,20 +127,7 @@ public class StoargeRED extends LinearOpMode {
         waitForStart();
         //In Play
 
-        int HubPosition = 0;
-
-        if (SabUtils.Camera.getVoltage() < 1.6) {
-            //Left position is bottom
-            HubPosition = 2;
-        }
-        if ((SabUtils.Camera.getVoltage() > 1.6) && (SabUtils.Camera.getVoltage() < 2.3)) {
-            //Middle position is middle
-            HubPosition = 1;
-        }
-        if (SabUtils.Camera.getVoltage() > 2.3) {
-            //Right position is top
-            HubPosition = 0;
-        }
+        int HubPosition = SabUtils.CameraLevel(SabUtils.Alliance.Red);
 
         telemetry.addData("Detected level", HubPosition);
         telemetry.update();
@@ -165,7 +159,7 @@ public class StoargeRED extends LinearOpMode {
         sleep(1750);
         SabUtils.IntakeOff();
 
-        drive.followTrajectorySequence(Warehouse);
+        drive.followTrajectorySequence(ToStorage);
         SabUtils.MovingArmBack(SabUtils.ArmPositionBack.Floor);
         sleep(2000);
 

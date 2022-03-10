@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -53,10 +54,10 @@ public class StorageBLUE extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         //creating position
-        Pose2d startPose = new Pose2d(-41,-63,Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-41,63,Math.toRadians(270));
 
         //telling localizer that this is where we are starting
-        drive.setPoseEstimate(new Pose2d(-41,-63,Math.toRadians(90)));
+        drive.setPoseEstimate(new Pose2d(-41,63,Math.toRadians(270)));
 
         //building trajectories
         Trajectory TestTrajectory = drive.trajectoryBuilder(startPose)
@@ -64,15 +65,15 @@ public class StorageBLUE extends LinearOpMode {
                 .build();
 
         Trajectory ToCarousel = drive.trajectoryBuilder(startPose, true)
-                .splineTo(new Vector2d(-56,50), Math.toRadians(25))
+                .splineTo(new Vector2d(-56,-50), Math.toRadians(25))
                 .build();
 
         TrajectorySequence CarouselSequence = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(-65,-56,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-68,56,Math.toRadians(270)))
                 .build();
 
         TrajectorySequence Hub = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(-12,-50),Math.toRadians(90))
+                .splineTo(new Vector2d(-12,50),Math.toRadians(270))
                 .build();
 
         TrajectorySequence GoToTop = drive.trajectorySequenceBuilder(Hub.end())
@@ -87,14 +88,19 @@ public class StorageBLUE extends LinearOpMode {
 
         TrajectorySequence GoToLow = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(6)
+                .forward(7)
                 .build();
 
         TrajectorySequence Warehouse = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d (10,-69,Math.toRadians(0)))
-                .strafeRight(2)
-                .lineToLinearHeading(new Pose2d (45,-69,Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d (45,-48,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d (10,69,Math.toRadians(0)))
+                .strafeLeft(2)
+                .lineToLinearHeading(new Pose2d (45,69,Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d (45,48,Math.toRadians(270)))
+                .build();
+
+        TrajectorySequence ToStorage = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d (-36,60,Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d (-68,30,Math.toRadians(270)))
                 .build();
 
         TrajectorySequence Turn90 = drive.trajectorySequenceBuilder(startPose)
@@ -107,6 +113,7 @@ public class StorageBLUE extends LinearOpMode {
         SabUtils.ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
         SabUtils.StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
         SabUtils.Camera = hardwareMap.get(AnalogInput.class, "Camera");
+        SabUtils.WristServo = hardwareMap.get(Servo.class, "WristServo");
 
         SabUtils.rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         SabUtils.LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -120,20 +127,7 @@ public class StorageBLUE extends LinearOpMode {
         waitForStart();
         //In Play
 
-        int HubPosition = 0;
-
-        if (SabUtils.Camera.getVoltage() < 1.6) {
-            //Left position is bottom
-            HubPosition = 2;
-        }
-        if ((SabUtils.Camera.getVoltage() > 1.6) && (SabUtils.Camera.getVoltage() < 2.3)) {
-            //Middle position is middle
-            HubPosition = 1;
-        }
-        if (SabUtils.Camera.getVoltage() > 2.3) {
-            //Right position is top
-            HubPosition = 0;
-        }
+        int HubPosition = SabUtils.CameraLevel(SabUtils.Alliance.Red);
 
         telemetry.addData("Detected level", HubPosition);
         telemetry.update();
@@ -165,7 +159,7 @@ public class StorageBLUE extends LinearOpMode {
         sleep(1750);
         SabUtils.IntakeOff();
 
-        drive.followTrajectorySequence(Warehouse);
+        drive.followTrajectorySequence(ToStorage);
         SabUtils.MovingArmBack(SabUtils.ArmPositionBack.Floor);
         sleep(2000);
 

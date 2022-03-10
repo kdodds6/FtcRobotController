@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.analysis.function.Power;
@@ -93,7 +94,7 @@ public class EverythingAutonRED extends LinearOpMode {
 
         TrajectorySequence GoToLow = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(6)
+                .forward(7)
                 .build();
 
         TrajectorySequence Warehouse = drive.trajectorySequenceBuilder(startPose)
@@ -113,6 +114,7 @@ public class EverythingAutonRED extends LinearOpMode {
         SabUtils.ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
         SabUtils.StarIntake = hardwareMap.get(DcMotor.class, "StarIntake");
         SabUtils.Camera = hardwareMap.get(AnalogInput.class, "Camera");
+        SabUtils.WristServo = hardwareMap.get(Servo.class, "WristServo");
 
         SabUtils.rightCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         SabUtils.LeftCarouselSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -126,20 +128,7 @@ public class EverythingAutonRED extends LinearOpMode {
         waitForStart();
         //In Play
 
-        int HubPosition = 0;
-
-        if (SabUtils.Camera.getVoltage() < 1.6) {
-            //Left position is bottom
-            HubPosition = 2;
-        }
-        if ((SabUtils.Camera.getVoltage() > 1.6) && (SabUtils.Camera.getVoltage() < 2.3)) {
-            //Middle position is middle
-            HubPosition = 1;
-        }
-        if (SabUtils.Camera.getVoltage() > 2.3) {
-            //Right position is top
-            HubPosition = 0;
-        }
+        int HubPosition = SabUtils.CameraLevel(SabUtils.Alliance.Red);
 
         telemetry.addData("Detected level", HubPosition);
         telemetry.update();
