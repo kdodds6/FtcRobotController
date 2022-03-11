@@ -83,12 +83,12 @@ public class WarehouseBLUE extends LinearOpMode {
 
         TrajectorySequence GoToMiddle = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(6)
+                .forward(5.5)
                 .build();
 
         TrajectorySequence GoToLow = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(7)
+                .forward(6.5)
                 .build();
 
         TrajectorySequence ToWarehouse = drive.trajectorySequenceBuilder(startPose)

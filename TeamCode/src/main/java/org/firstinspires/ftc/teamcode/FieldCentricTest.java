@@ -323,7 +323,7 @@ public class FieldCentricTest extends LinearOpMode {
                 IntakeServo.setPosition(0);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(ArmPower);
-                armMotor.setTargetPosition(3150);
+                armMotor.setTargetPosition(3225);
 
                 WristServo.setDirection(Servo.Direction.REVERSE);
                 WristServo.setPosition(0.35);
@@ -365,7 +365,7 @@ public class FieldCentricTest extends LinearOpMode {
                     //X = Turns off Intake
                     starIntake.setPower(0);
                 }
-/*
+
 
                 if (gamepad1.y) {
                     LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -377,7 +377,7 @@ public class FieldCentricTest extends LinearOpMode {
                     LeftCarouselSpinner.setPower(0);
                 }
 
-                 */
+
                 DistanceSensor = ColorSensorV3_DistanceSensor.getDistance(DistanceUnit.MM);
                 if(DistanceSensor < 34){
                     starIntake.setPower(0);

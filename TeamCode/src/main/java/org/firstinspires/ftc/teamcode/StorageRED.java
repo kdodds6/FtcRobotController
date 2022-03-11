@@ -83,12 +83,12 @@ public class StorageRED extends LinearOpMode {
 
         TrajectorySequence GoToMiddle = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(7.5)
+                .forward(7)
                 .build();
 
         TrajectorySequence GoToLow = drive.trajectorySequenceBuilder(Hub.end())
                 //.lineToLinearHeading(new Pose2d (-12,-39, Math.toRadians(90)))
-                .forward(9)
+                .forward(8.5)
                 .build();
 
         TrajectorySequence Warehouse = drive.trajectorySequenceBuilder(startPose)
@@ -134,8 +134,9 @@ public class StorageRED extends LinearOpMode {
 
         drive.followTrajectorySequence(CarouselSequence);
         SabUtils.CarouselSpinnersON();
-        sleep(2500);
+        sleep(3000);
         SabUtils.CarouselSpinnersOFF();
+        //sleep(3000);
         drive.followTrajectorySequence(Hub);
 
         if (HubPosition == 0) {
