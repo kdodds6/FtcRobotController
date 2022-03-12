@@ -35,8 +35,8 @@ public class SabUtils {
     public static void CarouselSpinnersON() {
         LeftCarouselSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
         rightCarouselSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightCarouselSpinner.setPower(0.6);
-        LeftCarouselSpinner.setPower(0.6);
+        rightCarouselSpinner.setPower(0.5);
+        LeftCarouselSpinner.setPower(0.5);
     }
 
     public static void CarouselSpinnersOFF() {
@@ -102,7 +102,7 @@ public class SabUtils {
                 break;
             case Middle:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2650);
+                ArmMotor.setTargetPosition(2550);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 WristServo.setDirection(Servo.Direction.REVERSE);
@@ -110,7 +110,7 @@ public class SabUtils {
                 break;
             case Top:
                 ArmMotor.setPower(0.75);
-                ArmMotor.setTargetPosition(2350);
+                ArmMotor.setTargetPosition(2150);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 WristServo.setDirection(Servo.Direction.REVERSE);
